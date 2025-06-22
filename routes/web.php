@@ -30,5 +30,11 @@ Route::middleware(['auth'])->group(function () {
     // Routes pour le dossier médical
     Route::get('patients/{patient}/dossier', [\App\Http\Controllers\DossierMedicalController::class, 'show'])->name('dossiers.show');
     Route::post('patients/{patient}/dossier', [\App\Http\Controllers\DossierMedicalController::class, 'store'])->name('dossiers.store');
+
+    // Routes pour les consultations
+    Route::resource('patients.consultations', \App\Http\Controllers\ConsultationController::class)->shallow();
+
+    // Routes pour les hospitalisations
+    Route::resource('patients.hospitalisations', \App\Http\Controllers\HospitalisationController::class)->shallow();
 });
 

@@ -53,7 +53,7 @@
                       <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Nom</th>
                       <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Date de naissance</th>
                       <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Genre</th>
-                      <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Derniè</th>
+                      <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Dernière consultation</th>
                       <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Status</th>
                       <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Actions</th>
                     </tr>

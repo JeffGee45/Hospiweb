@@ -36,9 +36,24 @@
             <strong class="block text-gray-700 text-sm font-bold mb-2">Antécédents:</strong>
             <p class="text-gray-700">{{ $patient->antecedents ?? 'N/A' }}</p>
         </div>
-        <div class="flex items-center justify-start">
-             <a href="{{ route('patients.edit', $patient->id) }}" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mr-2">Modifier</a>
-             <a href="{{ route('dossiers.show', $patient->id) }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">Voir le dossier médical</a>
+        <div class="flex items-center justify-between mt-6">
+            <a href="{{ route('patients.index') }}" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+                Retour à la liste
+            </a>
+            <div class="flex space-x-2">
+                <a href="{{ route('patients.edit', $patient->id) }}" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                    Modifier
+                </a>
+                <a href="{{ route('dossiers.show', $patient->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                    Dossier Médical
+                </a>
+                <a href="{{ route('patients.consultations.index', $patient->id) }}" class="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded">
+                    Consultations
+                </a>
+                <a href="{{ route('patients.hospitalisations.index', $patient->id) }}" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                    Hospitalisations
+                </a>
+            </div>
         </div>
     </div>
 </div>
