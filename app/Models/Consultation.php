@@ -9,6 +9,10 @@ class Consultation extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'date_consultation' => 'datetime',
+    ];
+
     protected $fillable = ['patient_id', 'medecin_id', 'date_consultation', 'notes', 'diagnostic'];
 
     public function patient()
@@ -19,5 +23,10 @@ class Consultation extends Model
     public function medecin()
     {
         return $this->belongsTo(Medecin::class);
+    }
+
+    public function prescription()
+    {
+        return $this->hasOne(Prescription::class);
     }
 }

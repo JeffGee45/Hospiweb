@@ -2,8 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\DossierMedicalController;
+use App\Http\Controllers\ConsultationController;
+use App\Http\Controllers\HospitalisationController;
+use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\RendezVousController;
 
 // Page d'accueil - redirige vers la connexion
 Route::get('/', function () {
@@ -21,9 +27,9 @@ Route::post('register', [RegisterController::class, 'register']);
 // Routes pour la gestion des patients (protégées par l'authentification)
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
-    $patients = \App\Models\Patient::all();
-    return view('dashboard', ['patients' => $patients]);
-})->name('dashboard');
+        $patients = \App\Models\Patient::all();
+        return view('dashboard', ['patients' => $patients]);
+    })->name('dashboard');
 
     Route::resource('patients', PatientController::class);
 
@@ -35,6 +41,15 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('patients.consultations', \App\Http\Controllers\ConsultationController::class)->shallow();
 
     // Routes pour les hospitalisations
-    Route::resource('patients.hospitalisations', \App\Http\Controllers\HospitalisationController::class)->shallow();
-});
+    Route::resource('patients.hospitalisations', HospitalisationController::class)->shallow();
 
+    // Routes pour les prescriptions liées à une consultation
+    Route::get('consultations/{consultation}/prescriptions/create', [App\Http\Controllers\PrescriptionController::class, 'create'])->name('consultations.prescriptions.create');
+    Route::post('consultations/{consultation}/prescriptions', [PrescriptionController::class, 'store'])->name('consultations.prescriptions.store');
+
+    // Routes pour la gestion des médecins
+    Route::resource('medecins', MedecinController::class);
+
+    // Routes pour la gestion des rendez-vous
+    Route::resource('rendez-vous', RendezVousController::class);
+});

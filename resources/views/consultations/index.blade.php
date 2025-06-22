@@ -32,7 +32,11 @@
                         @foreach ($consultations as $consultation)
                             <tr class="border-b border-gray-200 hover:bg-gray-100">
                                 <td class="py-3 px-6 text-left whitespace-nowrap">{{ $consultation->date_consultation->format('d/m/Y H:i') }}</td>
-                                <td class="py-3 px-6 text-left">Dr. {{ $consultation->medecin->prenom }} {{ $consultation->medecin->nom }}</td>
+                                <td class="py-3 px-6 text-left">
+                                    <a href="{{ route('consultations.show', $consultation->id) }}" class="text-blue-600 hover:underline">
+                                        Dr. {{ $consultation->medecin->prenom }} {{ $consultation->medecin->nom }}
+                                    </a>
+                                </td>
                                 <td class="py-3 px-6 text-left">{{ $consultation->diagnostic ?? 'N/A' }}</td>
                                 <td class="py-3 px-6 text-center">
                                     <div class="flex item-center justify-center">

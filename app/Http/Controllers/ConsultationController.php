@@ -43,4 +43,10 @@ class ConsultationController extends Controller
 
         return redirect()->route('patients.consultations.index', $patient)->with('success', 'Consultation ajoutée avec succès.');
     }
+
+    public function show(Consultation $consultation)
+    {
+        $consultation->load('patient', 'medecin', 'prescription.medicaments');
+        return view('consultations.show', compact('consultation'));
+    }
 }

@@ -65,38 +65,36 @@
                             {{ $patient->prenom }} {{ $patient->nom }}
                         </td>
                         <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
-                            {{ $patient->date_of_birth ?? 'N/D' }}
+                            {{ $patient->date_of_birth ? \Carbon\Carbon::parse($patient->date_of_birth)->format('d/m/Y') : 'N/D' }}
                         </td>
                         <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
-                            {{ $patient->gender ?? 'N/D' }}
+                            {{ $patient->gender }}
                         </td>
                         <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
-                            {{ $patient->last_visit ?? 'N/D' }}
+                            @if ($patient->latestConsultation)
+                                {{ \Carbon\Carbon::parse($patient->latestConsultation->date_consultation)->format('d/m/Y') }}
+                            @else
+                                <span class="text-gray-400">Aucune</span>
+                            @endif
                         </td>
                         <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
-                           {{ $patient->status }}
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $patient->status === 'Actif' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' }}">
+                                {{ $patient->status ?? 'Inactif' }}
+                            </span>
                         </td>
                         <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
                             <div class="flex items-center gap-4">
                                 <a href="{{ route('patients.show', $patient->id) }}" class="text-gray-500 hover:text-blue-600" title="Voir le patient">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" />
-                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z" /><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.022 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd" /></svg>
                                 </a>
                                 <a href="{{ route('patients.edit', $patient->id) }}" class="text-gray-500 hover:text-green-600" title="Modifier le patient">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                        <path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" />
-                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
                                 </a>
                                 <form action="{{ route('patients.destroy', $patient->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce patient ?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-gray-500 hover:text-red-600" title="Supprimer le patient">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
                                     </button>
                                 </form>
                             </div>

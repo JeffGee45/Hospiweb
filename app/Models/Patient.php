@@ -35,4 +35,12 @@ class Patient extends Model
     {
         return $this->hasMany(Hospitalisation::class);
     }
+
+    /**
+     * Récupère la dernière consultation du patient.
+     */
+    public function latestConsultation()
+    {
+        return $this->hasOne(Consultation::class)->latest('date_consultation');
+    }
 }
