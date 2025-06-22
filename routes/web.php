@@ -10,6 +10,7 @@ use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RendezVousController;
+use App\Http\Controllers\RapportController;
 
 // Page d'accueil - redirige vers la connexion
 Route::get('/', function () {
@@ -52,4 +53,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Routes pour la gestion des rendez-vous
     Route::resource('rendez-vous', RendezVousController::class);
+
+    // Routes pour les rapports et statistiques
+    Route::get('rapports', [RapportController::class, 'index'])->name('rapports.index');
+    Route::get('rapports/export/consultations-par-medecin', [RapportController::class, 'exportConsultationsParMedecin'])->name('rapports.export.consultations');
+    Route::get('rapports/export/hospitalisations-en-cours', [RapportController::class, 'exportHospitalisationsEnCours'])->name('rapports.export.hospitalisations');
+    Route::get('rapports/export/medicaments-prescrits', [RapportController::class, 'exportMedicamentsPrescrits'])->name('rapports.export.medicaments');
+    Route::get('rapports/export/statistiques-patients', [RapportController::class, 'exportStatistiquesPatients'])->name('rapports.export.patients');
 });
