@@ -12,7 +12,14 @@ class PatientController extends Controller
      */
     public function index()
     {
-        $patients = Patient::with('latestConsultation')->latest()->paginate(10);
+        $query = Patient::query();
+        if ($search = request('q')) {
+            $query->where(function($q) use ($search) {
+                $q->where('nom', 'like', "%$search%")
+                  ->orWhere('prenom', 'like', "%$search%");
+            });
+        }
+        $patients = $query->with('latestConsultation')->latest()->paginate(10)->appends(['q' => $search]);
         return view('patients.index', compact('patients'));
     }
 
@@ -91,5 +98,18 @@ class PatientController extends Controller
 
         return redirect()->route('patients.index')
                          ->with('success', 'Patient supprimé avec succès.');
+    }
+
+    /**
+     * Change le statut du patient (Actif, Inactif, Décédé).
+     */
+    public function changeStatus(Request $request, Patient $patient)
+    {
+        $request->validate([
+            'status' => 'required|string|in:Actif,Inactif,Décédé',
+        ]);
+        $patient->status = $request->status;
+        $patient->save();
+        return redirect()->route('patients.index')->with('success', 'Statut du patient mis à jour.');
     }
 }

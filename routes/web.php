@@ -27,11 +27,9 @@ Route::post('register', [RegisterController::class, 'register']);
 
 // Routes pour la gestion des patients (protégées par l'authentification)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/dashboard', function () {
-        $patients = \App\Models\Patient::all();
-        return view('dashboard', ['patients' => $patients]);
-    })->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
+    Route::post('patients/{patient}/change-status', [App\Http\Controllers\PatientController::class, 'changeStatus'])->name('patients.changeStatus');
     Route::resource('patients', PatientController::class);
 
     // Routes pour le dossier médical
@@ -52,6 +50,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('medecins', MedecinController::class);
 
     // Routes pour la gestion des rendez-vous
+    Route::post('rendez-vous/{rendez_vous}/annuler', [App\Http\Controllers\RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
     Route::resource('rendez-vous', RendezVousController::class);
 
     // Routes pour les rapports et statistiques

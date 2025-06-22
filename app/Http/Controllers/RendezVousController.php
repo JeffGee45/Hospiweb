@@ -64,4 +64,18 @@ class RendezVousController extends Controller
         $rendezVou->delete();
         return redirect()->route('rendez-vous.index')->with('success', 'Rendez-vous supprimé avec succès.');
     }
+
+    /**
+     * Annule un rendez-vous (statut = 'Annulé').
+     */
+    public function annuler($id)
+    {
+        $rdv = RendezVous::findOrFail($id);
+        if ($rdv->statut !== 'Annulé') {
+            $rdv->statut = 'Annulé';
+            $rdv->save();
+            return redirect()->route('rendez-vous.index')->with('success', 'Le rendez-vous a été annulé.');
+        }
+        return redirect()->route('rendez-vous.index')->with('error', 'Impossible d\'annuler ce rendez-vous.');
+    }
 }
