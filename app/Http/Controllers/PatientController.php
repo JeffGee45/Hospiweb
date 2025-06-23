@@ -46,7 +46,11 @@ class PatientController extends Controller
             'antecedents' => 'nullable|string',
         ]);
 
-        Patient::create($request->all());
+        $data = $request->all();
+        if (empty($data['status'])) {
+            $data['status'] = 'Actif';
+        }
+        Patient::create($data);
 
         return redirect()->route('patients.index')
                          ->with('success', 'Patient créé avec succès.');

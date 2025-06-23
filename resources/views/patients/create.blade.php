@@ -16,6 +16,7 @@
             @endif
 
             <form action="{{ route('patients.store') }}" method="POST" class="space-y-5">
+                <input type="hidden" name="status" value="Actif">
                 @csrf
                 <div>
                     <label for="nom" class="block font-semibold text-gray-700 mb-1">Nom</label>

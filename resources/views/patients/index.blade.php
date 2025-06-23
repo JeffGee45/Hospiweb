@@ -60,6 +60,7 @@
                             <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Date de
                                 naissance</th>
                             <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Genre</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Groupe sanguin</th>
                             <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Dernière
                                 consultation</th>
                             <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Status</th>
@@ -77,6 +78,14 @@
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
                                     {{ $patient->gender }}
+                                </td>
+                                <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
+                                    <span class="inline-flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 22c4.418 0 8-4.03 8-9 0-3.866-2.239-7-5-7-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3 1.657 0 3-1.343 3-3" />
+                                        </svg>
+                                        <span>{{ $patient->blood_group ?? 'N/A' }}</span>
+                                    </span>
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
                                     @if ($patient->latestConsultation)

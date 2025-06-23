@@ -18,6 +18,10 @@ class Patient extends Model
         'antecedents',
     ];
 
+    protected $attributes = [
+        'status' => 'Actif',
+    ];
+
     /**
      * Get the medical record associated with the patient.
      */

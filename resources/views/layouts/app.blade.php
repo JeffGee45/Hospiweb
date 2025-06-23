@@ -15,6 +15,8 @@
     <!-- Scripts -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
 </head>
 
 <body class="font-sans antialiased">
@@ -30,15 +32,7 @@
                             </div> --}}
                             <span class="flex items-center gap-2">
                                 <!-- Logo SVG médical stylisé -->
-                                <svg class="h-8 w-8 text-blue-600" viewBox="0 0 40 40" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="20" cy="20" r="19" stroke="currentColor" stroke-width="2"
-                                        fill="#fff" />
-                                    <rect x="17" y="8" width="6" height="24" rx="3"
-                                        fill="currentColor" />
-                                    <rect x="8" y="17" width="24" height="6" rx="3"
-                                        fill="currentColor" />
-                                </svg>
+                                <img src="{{ asset('images/hospital-logo.svg') }}" alt="Logo Hôpital" class="h-8 w-8" />
                                 <span class="text-xl font-bold text-gray-800 tracking-tight">Hospiweb</span>
                             </span>
                         </a>
