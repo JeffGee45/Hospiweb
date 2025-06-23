@@ -30,11 +30,7 @@
                             {{-- <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
                                 style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCYwS462gNiAu_ZM6yRCstdcK9T-pt8JiZaFMe2TVqtGaw_nASupRNNRT5SDwZEaHrtVcOvdxrYdaAbJokJPHYpf745UywDPvJLocw2FkLCF7xac-atQoVDDSjJiJXQNTiQvIs0MNRz9-zi4texquEf9fzNctIQLebF1-flLFsSVj2ueYRrHAIQA04XyG8itrpA-Wn2fx-8zix1-0ImFwP4V_Y2QProqxwmL24exK54Jh2yqffRpHAygeLLG-qdQa0YF6uwEcT2JzU");'>
                             </div> --}}
-                            <span class="flex items-center gap-2">
-                                <!-- Logo SVG médical stylisé -->
-                                <img src="{{ asset('images/hospital-logo.svg') }}" alt="Logo Hôpital" class="h-8 w-8" />
-                                <span class="text-xl font-bold text-gray-800 tracking-tight">Hospiweb</span>
-                            </span>
+                            <img class="h-16 w-auto mx-auto" src="{{ asset('images/hospital-logo.svg') }}" alt="Hospiweb Logo">
                         </a>
                     </div>
                     <nav class="mt-4">

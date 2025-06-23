@@ -1,13 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GetStartedController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\DossierMedicalController;
 use App\Http\Controllers\ConsultationController;
 use App\Http\Controllers\HospitalisationController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\MedecinController;
-use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\RegisterController; 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RapportController;
@@ -26,7 +27,9 @@ Route::get('register', [RegisterController::class, 'showRegistrationForm'])->nam
 Route::post('register', [RegisterController::class, 'register']);
 
 // Routes pour la gestion des patients (protégées par l'authentification)
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(function () {
+    Route::get('/get-started', [GetStartedController::class, 'show'])->name('get-started');
+    Route::post('/get-started', [GetStartedController::class, 'complete'])->name('get-started.complete');
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     Route::post('patients/{patient}/change-status', [App\Http\Controllers\PatientController::class, 'changeStatus'])->name('patients.changeStatus');
