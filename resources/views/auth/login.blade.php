@@ -41,7 +41,16 @@
                 </div>
 
                 <div class="mt-4">
-                    <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                    <div class="mt-4">
+    <label for="role" class="block text-sm font-medium text-gray-700">Rôle</label>
+    <select id="role" name="role" required class="block w-full px-3 py-2 mt-1 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        <option value="admin">Admin</option>
+        <option value="docteur">Docteur</option>
+        <option value="infirmier">Infirmier</option>
+        <option value="secretaire">Secrétaire</option>
+    </select>
+</div>
+<label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
                     <div class="relative">
                         <input id="password" name="password" type="password" required
                             class="block w-full px-3 py-2 mt-1 placeholder-gray-400 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
