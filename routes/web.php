@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GetStartedController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\DossierMedicalController;
@@ -13,18 +14,19 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RapportController;
 
-// Page d'accueil - redirige vers la connexion
-Route::get('/', function () {
-    return redirect()->route('login');
-});
+// Page d'accueil
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 // Routes d'authentification
-Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('login', [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+Route::middleware('guest')->group(function () {
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
 
-Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('register', [RegisterController::class, 'register']);
+    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [RegisterController::class, 'register']);
+});
+
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 // Routes pour la gestion des patients (protégées par l'authentification)
 Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(function () {
