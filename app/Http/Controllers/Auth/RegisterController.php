@@ -31,17 +31,20 @@ class RegisterController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'role' => ['required', 'string', 'in:admin,docteur,infirmier,secretaire'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'role' => $request->role,
             'password' => Hash::make($request->password),
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('dashboard');
+        // Redirection vers get-started après inscription
+        return redirect()->route('get-started');
     }
 }

@@ -1,37 +1,31 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Hospiweb</title>
+    <title>{{ config('app.name', 'Hospiweb') }}</title>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
-    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'"
-        href="https://fonts.googleapis.com/css2?display=swap&amp;family=Public+Sans%3Awght%40400%3B500%3B700%3B900" />
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    
+    <!-- Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
     <!-- Scripts -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
 </head>
-
-<body class="font-sans antialiased">
-    <div class="min-h-screen bg-gray-100">
-        <div class="flex">
-            <!-- Sidebar -->
-            <aside class="w-64 bg-white shadow-md min-h-screen flex flex-col justify-between">
-                <div>
-                    <div class="p-4 border-b">
-                        <a href="{{ route('dashboard') }}" class="flex items-center gap-3">
-                            {{-- <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                                style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCYwS462gNiAu_ZM6yRCstdcK9T-pt8JiZaFMe2TVqtGaw_nASupRNNRT5SDwZEaHrtVcOvdxrYdaAbJokJPHYpf745UywDPvJLocw2FkLCF7xac-atQoVDDSjJiJXQNTiQvIs0MNRz9-zi4texquEf9fzNctIQLebF1-flLFsSVj2ueYRrHAIQA04XyG8itrpA-Wn2fx-8zix1-0ImFwP4V_Y2QProqxwmL24exK54Jh2yqffRpHAygeLLG-qdQa0YF6uwEcT2JzU");'>
-                            </div> --}}
-                            <img class="h-16 w-auto mx-auto" src="{{ asset('images/hospital-logo.svg') }}" alt="Hospiweb Logo">
-                        </a>
+<body class="font-sans antialiased bg-gray-100">
+    <div x-data="{ sidebarOpen: false }" class="flex h-screen bg-gray-200">
+        <!-- Sidebar -->
+        <aside :class="sidebarOpen ? 'block' : 'hidden'" @click.away="sidebarOpen = false" class="fixed inset-y-0 left-0 z-30 w-64 overflow-y-auto bg-gray-800 transition duration-300 transform lg:translate-x-0 lg:static lg:inset-0">
+            <div class="flex items-center justify-center mt-8">
+                <div class="flex items-center">
+                    <i class="fas fa-hospital-user fa-2x text-white"></i>
+                    <span class="mx-2 text-2xl font-semibold text-white">Hospiweb</span>
                     </div>
                     <nav class="mt-4">
                         <a href="{{ route('dashboard') }}"
@@ -73,18 +67,6 @@
                                 </path>
                             </svg>
                             <span>Rendez-vous</span>
-                        </a>
-                        <a href="{{ route('rapports.index') }}"
-                            class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('rapports.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
-                                </path>
-                            </svg>
-                            <span>Rapports</span>
-                        </a>
-                        {{-- Ajoutez d'autres liens ici --}}
                     </nav>
                 </div>
                 <div class="p-4 border-t">
@@ -114,9 +96,17 @@
             </aside>
 
             <!-- Main Content -->
-            <main class="flex-1 p-6">
+            <div class="container mx-auto px-6 py-8">
+                @if (session('error'))
+                    <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2 mb-4">
+                        Erreur
+                    </div>
+                    <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700 mb-4">
+                        <p>{{ session('error') }}</p>
+                    </div>
+                @endif
                 @yield('content')
-            </main>
+            </div>
         </div>
     </div>
 </body>
