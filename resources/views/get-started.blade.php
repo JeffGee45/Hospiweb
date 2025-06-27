@@ -28,7 +28,7 @@
                 <img class="h-24 w-auto" src="{{ asset('images/hospital-logo.svg') }}" alt="Hospiweb Logo">
             </div>
             <h1 class="text-3xl font-bold text-gray-800 mb-4">
-                Bienvenue Dr. {{ Auth::user()->name }}!
+                Bienvenue {{ $user->role }} {{ $user->name }} !
             </h1>
             <p class="text-gray-600 mb-8">
                 Hospiweb est une application de gestion hospitalière conçue pour vous aider à suivre vos patients, leurs rendez-vous et leurs hospitalisations de manière simple et efficace.
