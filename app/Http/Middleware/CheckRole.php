@@ -16,19 +16,37 @@ class CheckRole
      */
     public function handle(Request $request, Closure $next, ...$roles): Response
     {
+        // Vérifier si l'utilisateur est connecté
         if (!Auth::check()) {
-            return redirect('login');
+            return redirect()->route('login');
         }
 
-        $allowedRoles = [];
+        $user = Auth::user();
+        
+        // Si aucun rôle n'est spécifié, on refuse l'accès
+        if (empty($roles)) {
+            abort(403, 'Accès non autorisé : aucun rôle spécifié.');
+        }
+
+        // Vérifier si l'utilisateur a l'un des rôles requis
         foreach ($roles as $role) {
-            $allowedRoles = array_merge($allowedRoles, explode(',', $role));
+            // Gérer les rôles multiples séparés par des virgules
+            $roleList = explode(',', $role);
+            
+            foreach ($roleList as $r) {
+                $r = trim($r);
+                if ($user->role === $r) {
+                    return $next($request);
+                }
+            }
         }
 
-        if (in_array(Auth::user()->role, $allowedRoles)) {
-            return $next($request);
+        // Si l'utilisateur n'a aucun des rôles requis
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'Accès non autorisé.'], 403);
         }
-
-        abort(403, 'Accès non autorisé.');
+        
+        return redirect()->route('dashboard')
+                         ->with('error', 'Vous n\'avez pas les droits nécessaires pour accéder à cette page.');
     }
 }

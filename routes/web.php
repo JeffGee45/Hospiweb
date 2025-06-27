@@ -51,54 +51,114 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
 
     // --- GROUPES DE ROUTES PAR RÔLE ---
 
-    // Routes pour l'Admin
-    // Routes pour l'Admin
+    /*
+    |--------------------------------------------------------------------------
+    | Routes pour l'Administrateur
+    |--------------------------------------------------------------------------
+    */
     Route::middleware('role:Admin')->group(function () {
+        // Gestion des utilisateurs
         Route::resource('users', UserController::class);
+        
+        // Gestion des médecins
         Route::resource('medecins', MedecinController::class);
-        Route::get('rapports', [RapportController::class, 'index'])->name('rapports.index');
-        Route::get('rapports/export/consultations-par-medecin', [RapportController::class, 'exportConsultationsParMedecin'])->name('rapports.export.consultations');
-        Route::get('rapports/export/hospitalisations-en-cours', [RapportController::class, 'exportHospitalisationsEnCours'])->name('rapports.export.hospitalisations');
-        Route::get('rapports/export/medicaments-prescrits', [RapportController::class, 'exportMedicamentsPrescrits'])->name('rapports.export.medicaments');
-        Route::get('rapports/export/statistiques-patients', [RapportController::class, 'exportStatistiquesPatients'])->name('rapports.export.patients');
-        Route::delete('patients/{patient}', [PatientController::class, 'destroy'])->name('patients.destroy');
-    });
-
-    // Routes pour le Médecin
-    // Routes pour le Médecin
-    Route::middleware('role:Medecin')->group(function () {
-        Route::get('patients/{patient}/dossier', [DossierMedicalController::class, 'show'])->name('dossiers.show');
-        Route::post('patients/{patient}/dossier', [DossierMedicalController::class, 'store'])->name('dossiers.store');
-        Route::resource('patients.consultations', ConsultationController::class)->shallow();
-        Route::resource('patients.hospitalisations', HospitalisationController::class)->shallow();
-        Route::get('consultations/{consultation}/prescriptions/create', [PrescriptionController::class, 'create'])->name('consultations.prescriptions.create');
-        Route::post('consultations/{consultation}/prescriptions', [PrescriptionController::class, 'store'])->name('consultations.prescriptions.store');
-    });
-
-    // Routes pour la Secrétaire
-    // Routes pour la Secrétaire
-    Route::middleware('role:Secretaire')->group(function () {
-        Route::resource('rendez-vous', RendezVousController::class);
-        Route::get('patients/create', [PatientController::class, 'create'])->name('patients.create');
-        Route::post('patients', [PatientController::class, 'store'])->name('patients.store');
+        
+        // Rapports et statistiques
+        Route::prefix('rapports')->group(function () {
+            Route::get('/', [RapportController::class, 'index'])->name('rapports.index');
+            Route::get('export/consultations-par-medecin', [RapportController::class, 'exportConsultationsParMedecin'])->name('rapports.export.consultations');
+            Route::get('export/hospitalisations-en-cours', [RapportController::class, 'exportHospitalisationsEnCours'])->name('rapports.export.hospitalisations');
+            Route::get('export/medicaments-prescrits', [RapportController::class, 'exportMedicamentsPrescrits'])->name('rapports.export.medicaments');
+            Route::get('export/statistiques-patients', [RapportController::class, 'exportStatistiquesPatients'])->name('rapports.export.patients');
+        });
+        
+        // Gestion des patients (accès complet)
+        Route::resource('patients', PatientController::class)->except(['create', 'store']);
     });
 
     /*
     |--------------------------------------------------------------------------
-    | Routes partagées par plusieurs rôles
+    | Routes pour le Médecin
     |--------------------------------------------------------------------------
-    |
-    | Ces routes sont définies individuellement pour un contrôle plus fin
-    | des permissions.
-    |
     */
-    // Routes partagées par plusieurs rôles
-    Route::get('patients', [PatientController::class, 'index'])->name('patients.index')->middleware('role:Admin,Medecin,Infirmier,Secretaire');
-    Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show')->middleware('role:Admin,Medecin,Infirmier');
-    Route::get('patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit')->middleware('role:Admin,Secretaire,Medecin');
-    Route::put('patients/{patient}', [PatientController::class, 'update'])->name('patients.update')->middleware('role:Admin,Secretaire,Medecin');
-    Route::patch('patients/{patient}', [PatientController::class, 'update'])->middleware('role:Admin,Secretaire,Medecin');
-    Route::post('patients/{patient}/change-status', [PatientController::class, 'changeStatus'])->name('patients.changeStatus')->middleware('role:Admin,Medecin');
+    Route::middleware('role:Medecin')->group(function () {
+        // Dossiers médicaux
+        Route::get('patients/{patient}/dossier', [DossierMedicalController::class, 'show'])->name('dossiers.show');
+        Route::post('patients/{patient}/dossier', [DossierMedicalController::class, 'store'])->name('dossiers.store');
+        
+        // Consultations
+        Route::resource('patients.consultations', ConsultationController::class)->shallow()->except(['destroy']);
+        
+        // Hospitalisations
+        Route::resource('patients.hospitalisations', HospitalisationController::class)->shallow()->except(['destroy']);
+        
+        // Prescriptions
+        Route::get('consultations/{consultation}/prescriptions/create', [PrescriptionController::class, 'create'])->name('consultations.prescriptions.create');
+        Route::post('consultations/{consultation}/prescriptions', [PrescriptionController::class, 'store'])->name('consultations.prescriptions.store');
+        
+        // Voir les patients (lecture seule)
+        Route::get('patients', [PatientController::class, 'index'])->name('patients.index');
+        Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Routes pour la Secrétaire
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:Secretaire')->group(function () {
+        // Gestion des rendez-vous
+        Route::resource('rendez-vous', RendezVousController::class)->except(['destroy']);
+        
+        // Gestion des patients (création et mise à jour)
+        Route::get('patients', [PatientController::class, 'index'])->name('patients.index');
+        Route::get('patients/create', [PatientController::class, 'create'])->name('patients.create');
+        Route::post('patients', [PatientController::class, 'store'])->name('patients.store');
+        Route::get('patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit');
+        Route::put('patients/{patient}', [PatientController::class, 'update'])->name('patients.update');
+        Route::patch('patients/{patient}', [PatientController::class, 'update']);
+    });
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Routes pour l'Infirmier
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:Infirmier')->group(function () {
+        // Gestion des soins
+        Route::get('soins', [\App\Http\Controllers\SoinsController::class, 'index'])->name('soins.index');
+        
+        // Voir les patients (lecture seule)
+        Route::get('patients', [PatientController::class, 'index'])->name('patients.index');
+        Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
+    });
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Routes pour le Pharmacien
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:Pharmacien')->group(function () {
+        // Gestion de la pharmacie
+        Route::get('pharmacie', [\App\Http\Controllers\PharmacieController::class, 'index'])->name('pharmacie.index');
+    });
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Routes pour le Caissier
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('role:Caissier')->group(function () {
+        // Gestion de la facturation
+        Route::get('facturation', [\App\Http\Controllers\FacturationController::class, 'index'])->name('facturation.index');
+    });
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Routes partagées (si nécessaire)
+    |--------------------------------------------------------------------------
+    */
+    // Aucune route partagée pour l'instant - toutes les routes sont spécifiques aux rôles
 
     /*
     |--------------------------------------------------------------------------

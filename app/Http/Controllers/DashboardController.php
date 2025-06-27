@@ -12,6 +12,11 @@ use App\Models\Facture;
 
 class DashboardController extends Controller
 {
+    /**
+     * Affiche le tableau de bord en fonction du rôle de l'utilisateur
+     *
+     * @return \Illuminate\View\View
+     */
     public function index()
     {
         $user = Auth::user();
@@ -20,12 +25,7 @@ class DashboardController extends Controller
 
         switch ($user->role) {
             case 'Admin':
-                $viewName = 'dashboards.admin';
-                $data['totalUsers'] = User::count();
-                $data['totalPatients'] = Patient::count();
-                $data['totalMedecins'] = User::where('role', 'Medecin')->count();
-                $data['todayAppointments'] = RendezVous::whereDate('date_rendez_vous', Carbon::today())->count();
-                break;
+                return $this->admin();
                 
             case 'Patient':
                 $viewName = 'dashboards.patient';
@@ -63,11 +63,14 @@ class DashboardController extends Controller
                 $viewName = 'dashboards.secretaire';
                 $data['todayAppointmentsCount'] = RendezVous::whereDate('date_rendez_vous', Carbon::today())->count();
                 $data['newPatientsCount'] = Patient::whereDate('created_at', Carbon::today())->count();
-                $data['upcomingAppointments'] = RendezVous::where('date_rendez_vous', '>', Carbon::now())
-                                                          ->orderBy('date_rendez_vous', 'asc')
-                                                          ->with('patient', 'medecin') // Eager load relationships
-                                                          ->take(5)
-                                                          ->get();
+                $data['upcomingAppointments'] = RendezVous::with([
+                    'patient.user',
+                    'medecin'
+                ])
+                ->where('date_rendez_vous', '>', Carbon::now())
+                ->orderBy('date_rendez_vous', 'asc')
+                ->take(5)
+                ->get();
                 break;
             case 'Caissier':
                 $viewName = 'dashboards.caissier';
@@ -124,5 +127,38 @@ class DashboardController extends Controller
         }
 
         return view($viewName, $data);
+    }
+    
+    /**
+     * Affiche le tableau de bord administrateur
+     *
+     * @return \Illuminate\View\View
+     */
+    public function admin()
+    {
+        $user = Auth::user();
+        
+        // Statistiques générales
+        $totalUsers = User::count();
+        $totalPatients = Patient::count();
+        $totalMedecins = User::where('role', 'Medecin')->count();
+        
+        // Rendez-vous du jour
+        $todayAppointments = RendezVous::whereDate('date_rendez_vous', now()->toDateString())
+            ->count();
+            
+        // Dernières activités (exemple avec les 5 derniers utilisateurs créés)
+        $recentActivities = User::latest()
+            ->take(5)
+            ->get();
+
+        return view('dashboards.admin', [
+            'user' => $user,
+            'totalUsers' => $totalUsers,
+            'totalPatients' => $totalPatients,
+            'totalMedecins' => $totalMedecins,
+            'todayAppointments' => $todayAppointments,
+            'recentActivities' => $recentActivities
+        ]);
     }
 }

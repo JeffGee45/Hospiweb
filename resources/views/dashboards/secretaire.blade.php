@@ -48,9 +48,23 @@
                     <tbody class="divide-y divide-gray-200">
                         @forelse ($upcomingAppointments as $rdv)
                             <tr>
-                                <td class="py-4 px-4 whitespace-nowrap">{{ $rdv->patient->name ?? 'N/A' }}</td>
-                                <td class="py-4 px-4 whitespace-nowrap">Dr. {{ $rdv->medecin->name ?? 'N/A' }}</td>
-                                <td class="py-4 px-4 whitespace-nowrap">{{ \Carbon\Carbon::parse($rdv->date_heure)->format('d/m/Y à H:i') }}</td>
+                                <td class="py-4 px-4 whitespace-nowrap">
+                                    @if($rdv->patient && $rdv->patient->user)
+                                        {{ $rdv->patient->user->name }}
+                                    @else
+                                        Patient inconnu
+                                    @endif
+                                </td>
+                                <td class="py-4 px-4 whitespace-nowrap">
+                                    @if($rdv->medecin)
+                                        Dr. {{ $rdv->medecin->name }}
+                                    @else
+                                        Médecin non attribué
+                                    @endif
+                                </td>
+                                <td class="py-4 px-4 whitespace-nowrap">
+                                    {{ \Carbon\Carbon::parse($rdv->date_rendez_vous)->format('d/m/Y à H:i') }}
+                                </td>
                             </tr>
                         @empty
                             <tr>
