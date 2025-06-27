@@ -15,8 +15,8 @@ class PatientController extends Controller
         $query = Patient::query();
         if ($search = request('q')) {
             $query->where(function($q) use ($search) {
-                $q->where('nom', 'like', "%$search%")
-                  ->orWhere('prenom', 'like', "%$search%");
+                $q->where('nom', 'like', "%{$search}%")
+                  ->orWhere('prenom', 'like', "%{$search}%");
             });
         }
         $patients = $query->with('latestConsultation')->latest()->paginate(10)->appends(['q' => $search]);
@@ -36,21 +36,24 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
+            'date_naissance' => 'required|date',
+            'sexe' => 'required|string|in:Homme,Femme,Autre',
             'adresse' => 'required|string|max:255',
-            'gender' => 'nullable|string',
-            'blood_group' => 'nullable|string',
-            'antecedents' => 'nullable|string',
+            'telephone' => 'required|string|max:20',
+            'email' => 'nullable|email|unique:patients,email',
+            'groupe_sanguin' => 'nullable|string|max:5',
+            'antecedents_medicaux' => 'nullable|string',
+            'allergies' => 'nullable|string',
+            'nom_contact_urgence' => 'nullable|string|max:255',
+            'telephone_contact_urgence' => 'nullable|string|max:20',
         ]);
 
-        $data = $request->all();
-        if (empty($data['status'])) {
-            $data['status'] = 'Actif';
-        }
-        Patient::create($data);
+        $validatedData['statut'] = 'Actif';
+
+        Patient::create($validatedData);
 
         return redirect()->route('patients.index')
                          ->with('success', 'Patient créé avec succès.');
@@ -80,11 +83,17 @@ class PatientController extends Controller
         $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
+            'date_naissance' => 'required|date',
+            'sexe' => 'required|string|in:Homme,Femme,Autre',
             'adresse' => 'required|string|max:255',
-            'gender' => 'nullable|string',
-            'blood_group' => 'nullable|string',
-            'antecedents' => 'nullable|string',
+            'telephone' => 'required|string|max:20',
+            'email' => 'nullable|email|unique:patients,email,' . $patient->id,
+            'groupe_sanguin' => 'nullable|string|max:5',
+            'antecedents_medicaux' => 'nullable|string',
+            'allergies' => 'nullable|string',
+            'nom_contact_urgence' => 'nullable|string|max:255',
+            'telephone_contact_urgence' => 'nullable|string|max:20',
+            'statut' => 'string',
         ]);
 
         $patient->update($request->all());
@@ -110,10 +119,11 @@ class PatientController extends Controller
     public function changeStatus(Request $request, Patient $patient)
     {
         $request->validate([
-            'status' => 'required|string|in:Actif,Inactif,Décédé',
+            'statut' => 'required|string|in:Actif,Inactif,Décédé',
         ]);
-        $patient->status = $request->status;
-        $patient->save();
-        return redirect()->route('patients.index')->with('success', 'Statut du patient mis à jour.');
+
+        $patient->update(['statut' => $request->statut]);
+
+        return back()->with('success', 'Statut du patient mis à jour avec succès.');
     }
 }

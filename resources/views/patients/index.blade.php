@@ -57,10 +57,9 @@
                     <thead>
                         <tr class="bg-white">
                             <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Nom</th>
-                            <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Date de
-                                naissance</th>
-                            <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Genre</th>
-                            <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Groupe sanguin</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Date de Naissance</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Sexe</th>
+                            <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Groupe Sanguin</th>
                             <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Dernière
                                 consultation</th>
                             <th class="px-4 py-3 text-left text-sm font-medium leading-normal text-[#111518]">Status</th>
@@ -74,17 +73,17 @@
                                     {{ $patient->prenom }} {{ $patient->nom }}
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
-                                    {{ $patient->date_of_birth ? \Carbon\Carbon::parse($patient->date_of_birth)->format('d/m/Y') : 'N/D' }}
+                                    {{ $patient->date_naissance ? \Carbon\Carbon::parse($patient->date_naissance)->format('d/m/Y') : 'N/D' }}
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
-                                    {{ $patient->gender }}
+                                    {{ $patient->sexe }}
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
                                     <span class="inline-flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 22c4.418 0 8-4.03 8-9 0-3.866-2.239-7-5-7-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3 1.657 0 3-1.343 3-3" />
                                         </svg>
-                                        <span>{{ $patient->blood_group ?? 'N/A' }}</span>
+                                        <span>{{ $patient->groupe_sanguin ?? 'N/A' }}</span>
                                     </span>
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
@@ -96,15 +95,15 @@
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
                                     @php
-                                        $statusClasses = match ($patient->status) {
+                                        $statusClasses = match ($patient->statut) {
                                             'Actif' => 'bg-green-100 text-green-800',
-                                            'Décédé' => 'bg-gray-400 text-white',
                                             'Inactif' => 'bg-yellow-100 text-yellow-800',
-                                            default => 'bg-blue-100 text-blue-800',
+                                            'Décédé' => 'bg-red-100 text-red-800',
+                                            default => 'bg-gray-100 text-gray-800',
                                         };
                                     @endphp
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full {{ $statusClasses }}">
-                                        {{ $patient->status ?? 'Inactif' }}
+                                    <span class="px-2 py-1 font-semibold leading-tight rounded-full {{ $statusClasses }}">
+                                        {{ $patient->statut }}
                                     </span>
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
@@ -154,6 +153,9 @@
                         @endforeach
                     </tbody>
                 </table>
+            </div>
+            <div class="mt-4">
+                {{ $patients->links() }}
             </div>
             <style>
                 @container(max-width:120px)
