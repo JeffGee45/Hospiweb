@@ -14,6 +14,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FileUploadController;
 
 // Page d'accueil
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -29,14 +31,27 @@ Route::middleware('guest')->group(function () {
 
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
+// Routes pour le téléchargement de fichiers
+Route::middleware('auth')->group(function () {
+    Route::post('/upload-file', [FileUploadController::class, 'upload'])->name('file.upload');
+    Route::delete('/delete-file', [FileUploadController::class, 'delete'])->name('file.delete');
+});
+
 // Routes protégées par l'authentification
 Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(function () {
+    // Profil utilisateur
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     Route::get('/get-started', [GetStartedController::class, 'show'])->name('get-started');
     Route::post('/get-started', [GetStartedController::class, 'complete'])->name('get-started.complete');
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 
     // --- GROUPES DE ROUTES PAR RÔLE ---
 
+    // Routes pour l'Admin
     // Routes pour l'Admin
     Route::middleware('role:Admin')->group(function () {
         Route::resource('users', UserController::class);
@@ -50,7 +65,8 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
     });
 
     // Routes pour le Médecin
-    Route::middleware('role:Médecin')->group(function () {
+    // Routes pour le Médecin
+    Route::middleware('role:Medecin')->group(function () {
         Route::get('patients/{patient}/dossier', [DossierMedicalController::class, 'show'])->name('dossiers.show');
         Route::post('patients/{patient}/dossier', [DossierMedicalController::class, 'store'])->name('dossiers.store');
         Route::resource('patients.consultations', ConsultationController::class)->shallow();
@@ -60,7 +76,8 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
     });
 
     // Routes pour la Secrétaire
-    Route::middleware('role:Secrétaire')->group(function () {
+    // Routes pour la Secrétaire
+    Route::middleware('role:Secretaire')->group(function () {
         Route::resource('rendez-vous', RendezVousController::class);
         Route::get('patients/create', [PatientController::class, 'create'])->name('patients.create');
         Route::post('patients', [PatientController::class, 'store'])->name('patients.store');
@@ -75,12 +92,13 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
     | des permissions.
     |
     */
-    Route::get('patients', [PatientController::class, 'index'])->name('patients.index')->middleware('role:Admin,Médecin,Infirmier(e),Secrétaire');
-    Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show')->middleware('role:Admin,Médecin,Infirmier(e)');
-    Route::get('patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit')->middleware('role:Admin,Secrétaire,Médecin');
-    Route::put('patients/{patient}', [PatientController::class, 'update'])->name('patients.update')->middleware('role:Admin,Secrétaire,Médecin');
-    Route::patch('patients/{patient}', [PatientController::class, 'update'])->middleware('role:Admin,Secrétaire,Médecin');
-    Route::post('patients/{patient}/change-status', [PatientController::class, 'changeStatus'])->name('patients.changeStatus')->middleware('role:Admin,Médecin');
+    // Routes partagées par plusieurs rôles
+    Route::get('patients', [PatientController::class, 'index'])->name('patients.index')->middleware('role:Admin,Medecin,Infirmier,Secretaire');
+    Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show')->middleware('role:Admin,Medecin,Infirmier');
+    Route::get('patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit')->middleware('role:Admin,Secretaire,Medecin');
+    Route::put('patients/{patient}', [PatientController::class, 'update'])->name('patients.update')->middleware('role:Admin,Secretaire,Medecin');
+    Route::patch('patients/{patient}', [PatientController::class, 'update'])->middleware('role:Admin,Secretaire,Medecin');
+    Route::post('patients/{patient}/change-status', [PatientController::class, 'changeStatus'])->name('patients.changeStatus')->middleware('role:Admin,Medecin');
 
     /*
     |--------------------------------------------------------------------------
@@ -88,7 +106,8 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
     |--------------------------------------------------------------------------
     */
     // Routes pour l'Infirmier(e)
-    Route::middleware('role:Infirmier(e)')->group(function () {
+    // Routes pour l'Infirmier
+    Route::middleware('role:Infirmier')->group(function () {
         Route::get('soins', [\App\Http\Controllers\SoinsController::class, 'index'])->name('soins.index');
     });
 

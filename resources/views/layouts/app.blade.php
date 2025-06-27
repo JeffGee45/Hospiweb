@@ -101,28 +101,63 @@
                     </nav>
                 </div>
                 <div class="p-4 border-t">
-                    <div class="flex items-center gap-3 mb-3">
-                        <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10"
-                            style='background-image: url("https://lh3.googleusercontent.com/a/ACg8ocJ-92yI_iWk5qKx_Y5S...=s96-c");'>
-                            {{-- Placeholder --}}
-                        </div>
-                        <div>
-                            <p class="font-semibold text-gray-800">{{ Auth::user()->name }}</p>
+                    <!-- Menu déroulant du profil -->
+                    <div x-data="{ open: false }" class="relative">
+                        <!-- Bouton du menu -->
+                        <button @click="open = !open" class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-blue-100 text-blue-700 rounded-full p-2">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                    </svg>
+                                </div>
+                                <div class="text-left">
+                                    <p class="font-semibold text-sm text-gray-800">{{ Auth::user()->name }}</p>
+                                    <p class="text-xs text-gray-500">{{ Auth::user()->role }}</p>
+                                </div>
+                            </div>
+                            <svg :class="{ 'transform rotate-180': open }" class="h-5 w-5 text-gray-500 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Menu déroulant -->
+                        <div x-show="open" 
+                             @click.away="open = false"
+                             x-transition:enter="transition ease-out duration-100"
+                             x-transition:enter-start="transform opacity-0 scale-95"
+                             x-transition:enter-end="transform opacity-100 scale-100"
+                             x-transition:leave="transition ease-in duration-75"
+                             x-transition:leave-start="transform opacity-100 scale-100"
+                             x-transition:leave-end="transform opacity-0 scale-95"
+                             class="absolute bottom-full left-0 right-0 mb-2 w-full origin-bottom-left rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-10"
+                             style="display: none;">
+                            <div class="py-1" role="none">
+                                <a href="{{ route('profile.show') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                    </svg>
+                                    Mon profil
+                                </a>
+                                <a href="{{ route('profile.edit') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                    Modifier le profil
+                                </a>
+                                <div class="border-t border-gray-100 my-1"></div>
+                                <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                    @csrf
+                                    <button type="submit" class="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                        </svg>
+                                        Se déconnecter
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit"
-                            class="w-full flex items-center gap-3 px-4 py-2 text-left text-sm text-red-600 hover:bg-red-100 rounded-lg transition-colors duration-200">
-                            <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
-                                </path>
-                            </svg>
-                            <span>Se déconnecter</span>
-                        </button>
-                    </form>
                 </div>
             </aside>
 
@@ -132,6 +167,9 @@
             </main>
         </div>
     </div>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 
 </html>

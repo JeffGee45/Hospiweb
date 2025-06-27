@@ -45,7 +45,7 @@
         <tbody>
             @foreach ($data as $medecin)
                 <tr>
-                    <td>Dr. {{ $medecin->prenom }} {{ $medecin->nom }}</td>
+                    <td>Dr. {{ $medecin->name }}</td>
                     <td>{{ $medecin->consultations_count }}</td>
                 </tr>
             @endforeach

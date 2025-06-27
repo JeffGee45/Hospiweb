@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Consultation;
 use App\Models\Hospitalisation;
-use App\Models\Medecin;
+use App\Models\User;
 use App\Models\Patient;
 use App\Models\PrescriptionMedicament;
 use Illuminate\Http\Request;
@@ -20,10 +20,12 @@ class RapportController extends Controller
     public function index()
     {
         $stats = [
-            'consultations_par_medecin' => Medecin::withCount('consultations')->get(),
-            'hospitalisations_en_cours' => Hospitalisation::whereNull('date_sortie')->count(),
-            'medicaments_plus_prescrits' => PrescriptionMedicament::select('nom_medicament', DB::raw('count(*) as total'))
-                ->groupBy('nom_medicament')
+            'consultations_par_medecin' => User::where('role', 'Medecin')->withCount('consultations')->get(),
+            'hospitalisations_en_cours' => Hospitalisation::whereNull('date_sortie_reelle')->count(),
+            'medicaments_plus_prescrits' => DB::table('ordonnance_medicament')
+                ->join('medicaments', 'ordonnance_medicament.medicament_id', '=', 'medicaments.id')
+                ->select('medicaments.nom_commercial', DB::raw('count(*) as total'))
+                ->groupBy('medicaments.nom_commercial')
                 ->orderBy('total', 'desc')
                 ->limit(5)
                 ->get(),
@@ -38,7 +40,7 @@ class RapportController extends Controller
      */
     public function exportConsultationsParMedecin()
     {
-        $data = Medecin::withCount('consultations')->get();
+        $data = User::where('role', 'Medecin')->withCount('consultations')->get();
         $pdf = Pdf::loadView('rapports.pdf.consultations-par-medecin', ['data' => $data]);
         return $pdf->download('rapport-consultations-par-medecin-' . date('Y-m-d') . '.pdf');
     }
@@ -48,7 +50,7 @@ class RapportController extends Controller
      */
     public function exportHospitalisationsEnCours()
     {
-        $data = Hospitalisation::with('patient')->whereNull('date_sortie')->get();
+        $data = Hospitalisation::with('patient')->whereNull('date_sortie_reelle')->get();
         $pdf = Pdf::loadView('rapports.pdf.hospitalisations-en-cours', ['data' => $data]);
         return $pdf->download('rapport-hospitalisations-en-cours-' . date('Y-m-d') . '.pdf');
     }
@@ -58,8 +60,10 @@ class RapportController extends Controller
      */
     public function exportMedicamentsPrescrits()
     {
-        $data = PrescriptionMedicament::select('nom_medicament', DB::raw('count(*) as total'))
-            ->groupBy('nom_medicament')
+        $data = DB::table('ordonnance_medicament')
+            ->join('medicaments', 'ordonnance_medicament.medicament_id', '=', 'medicaments.id')
+            ->select('medicaments.nom_commercial', DB::raw('count(*) as total'))
+            ->groupBy('medicaments.nom_commercial')
             ->orderBy('total', 'desc')
             ->limit(20)
             ->get();

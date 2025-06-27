@@ -25,7 +25,7 @@ class UserController extends Controller
      */
     public function create()
     {
-        $roles = ['Admin', 'Médecin', 'Infirmier(e)', 'Secrétaire', 'Pharmacien', 'Caissier'];
+        $roles = ['Admin', 'Médecin', 'Infirmier', 'Secrétaire', 'Pharmacien', 'Caissier'];
         return view('admin.users.create', compact('roles'));
     }
 
@@ -38,7 +38,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
-            'role' => ['required', Rule::in(['Admin', 'Médecin', 'Secrétaire', 'Infirmier(e)', 'Pharmacien', 'Caissier'])],
+            'role' => ['required', Rule::in(['Admin', 'Médecin', 'Secrétaire', 'Infirmier', 'Pharmacien', 'Caissier'])],
         ]);
 
         $validatedData['password'] = Hash::make($validatedData['password']);
@@ -63,7 +63,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $roles = ['Admin', 'Médecin', 'Infirmier(e)', 'Secrétaire', 'Pharmacien', 'Caissier'];
+        $roles = ['Admin', 'Médecin', 'Infirmier', 'Secrétaire', 'Pharmacien', 'Caissier'];
         return view('admin.users.edit', compact('user', 'roles'));
     }
 
@@ -76,7 +76,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => ['required', Rule::in(['Admin', 'Médecin', 'Secrétaire', 'Infirmier(e)', 'Pharmacien', 'Caissier'])],
+            'role' => ['required', Rule::in(['Admin', 'Médecin', 'Secrétaire', 'Infirmier', 'Pharmacien', 'Caissier'])],
         ]);
 
         if (!empty($validatedData['password'])) {

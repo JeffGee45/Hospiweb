@@ -16,14 +16,12 @@ class Patient extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'numero_dossier',
-        'nom',
-        'prenom',
         'date_naissance',
         'lieu_naissance',
         'adresse',
         'telephone',
-        'email',
         'sexe',
         'groupe_sanguin',
         'allergies',
@@ -36,19 +34,31 @@ class Patient extends Model
         'notes',
         'statut'
     ];
-
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'deleted_at'
-    ];
-
+    
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
     protected $casts = [
         'date_naissance' => 'date',
         'allergies' => 'array',
         'antecedents_medicaux' => 'array',
-        'traitements_en_cours' => 'array'
+        'traitements_en_cours' => 'array',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
+    
+    /**
+     * Get the user that owns the patient.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+
 
     // Relations
     public function consultations()

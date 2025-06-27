@@ -67,7 +67,7 @@
                 <ul class="space-y-2">
                     @forelse($stats['consultations_par_medecin'] as $medecin)
                         <li class="flex justify-between items-center">
-                            <span>Dr. {{ $medecin->prenom }} {{ $medecin->nom }}</span>
+                            <span>Dr. {{ $medecin->name }}</span>
                             <span class="font-bold text-blue-600">{{ $medecin->consultations_count }}</span>
                         </li>
                     @empty

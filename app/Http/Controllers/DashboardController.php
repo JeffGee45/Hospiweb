@@ -23,32 +23,48 @@ class DashboardController extends Controller
                 $viewName = 'dashboards.admin';
                 $data['totalUsers'] = User::count();
                 $data['totalPatients'] = Patient::count();
-                $data['totalMedecins'] = User::where('role', 'Médecin')->count();
-                $data['todayAppointments'] = RendezVous::whereDate('date_heure', Carbon::today())->count();
+                $data['totalMedecins'] = User::where('role', 'Medecin')->count();
+                $data['todayAppointments'] = RendezVous::whereDate('date_rendez_vous', Carbon::today())->count();
                 break;
-            case 'Médecin':
+                
+            case 'Patient':
+                $viewName = 'dashboards.patient';
+                $data['upcomingAppointments'] = RendezVous::where('patient_id', $user->id)
+                    ->where('date_rendez_vous', '>', Carbon::now())
+                    ->orderBy('date_rendez_vous', 'asc')
+                    ->with('medecin')
+                    ->take(5)
+                    ->get();
+                $data['pastAppointments'] = RendezVous::where('patient_id', $user->id)
+                    ->where('date_rendez_vous', '<=', Carbon::now())
+                    ->orderBy('date_rendez_vous', 'desc')
+                    ->with('medecin')
+                    ->take(5)
+                    ->get();
+                break;
+            case 'Medecin':
                 $viewName = 'dashboards.medecin';
                 $medecinId = $user->id;
                 $data['todayAppointmentsCount'] = RendezVous::where('medecin_id', $medecinId)
-                                                              ->whereDate('date_heure', Carbon::today())
+                                                              ->whereDate('date_rendez_vous', Carbon::today())
                                                               ->count();
                 // Supposant une relation et un statut 'actif' pour les hospitalisations
                 $data['hospitalizedPatientsCount'] = \App\Models\Hospitalisation::where('medecin_id', $medecinId)
                                                                                 ->where('statut', 'actif') // ou une logique équivalente
                                                                                 ->count();
                 $data['upcomingAppointments'] = RendezVous::where('medecin_id', $medecinId)
-                                                          ->where('date_heure', '>', Carbon::now())
-                                                          ->orderBy('date_heure', 'asc')
+                                                          ->where('date_rendez_vous', '>', Carbon::now())
+                                                          ->orderBy('date_rendez_vous', 'asc')
                                                           ->with('patient')
                                                           ->take(5)
                                                           ->get();
                 break;
-            case 'Secrétaire':
+            case 'Secretaire':
                 $viewName = 'dashboards.secretaire';
-                $data['todayAppointmentsCount'] = RendezVous::whereDate('date_heure', Carbon::today())->count();
+                $data['todayAppointmentsCount'] = RendezVous::whereDate('date_rendez_vous', Carbon::today())->count();
                 $data['newPatientsCount'] = Patient::whereDate('created_at', Carbon::today())->count();
-                $data['upcomingAppointments'] = RendezVous::where('date_heure', '>', Carbon::now())
-                                                          ->orderBy('date_heure', 'asc')
+                $data['upcomingAppointments'] = RendezVous::where('date_rendez_vous', '>', Carbon::now())
+                                                          ->orderBy('date_rendez_vous', 'asc')
                                                           ->with('patient', 'medecin') // Eager load relationships
                                                           ->take(5)
                                                           ->get();

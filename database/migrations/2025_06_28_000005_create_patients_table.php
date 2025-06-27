@@ -13,17 +13,15 @@ return new class extends Migration
 
         Schema::create('patients', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('numero_dossier')->unique();
-            $table->string('nom');
-            $table->string('prenom');
             $table->date('date_naissance');
             $table->string('lieu_naissance')->nullable();
             $table->string('sexe');
             $table->text('adresse')->nullable();
-            $table->string('telephone')->unique();
-            $table->string('email')->unique()->nullable();
+            $table->string('telephone')->nullable();
             $table->string('profession')->nullable();
-            $table->string('groupe_sanguin')->nullable();
+            $table->string('groupe_sanguin', 5)->nullable();
             $table->json('allergies')->nullable();
             $table->json('antecedents_medicaux')->nullable();
             $table->json('traitements_en_cours')->nullable();
@@ -31,7 +29,7 @@ return new class extends Migration
             $table->string('telephone_contact_urgence')->nullable();
             $table->string('lien_contact_urgence')->nullable();
             $table->text('notes')->nullable();
-            $table->string('statut')->default('actif'); // actif, inactif, décédé
+            $table->enum('statut', ['actif', 'inactif', 'décédé'])->default('actif');
             $table->timestamps();
             $table->softDeletes();
         });

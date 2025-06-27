@@ -15,7 +15,7 @@ class RendezVous extends Model
         'patient_id',
         'medecin_id',
         'secretaire_id',
-        'date_rendez_vous',
+        'date_rendez_vous', // Champ unifié pour la date et l'heure
         'duree_estimee', // en minutes
         'type_rendez_vous', // Consultation, Suivi, Examen
         'statut', // Programmé, Confirmé, Annulé, Manqué, Terminé
@@ -25,17 +25,27 @@ class RendezVous extends Model
         'source_demande', // Téléphone, En ligne, Sur place
     ];
 
-    protected $dates = [
-        'date_rendez_vous',
-        'created_at',
-        'updated_at',
-        'deleted_at'
-    ];
-
     protected $casts = [
         'date_rendez_vous' => 'datetime',
         'duree_estimee' => 'integer',
         'rappels_envoyes' => 'boolean',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime',
+    ];
+    
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @deprecated Use the "casts" property
+     *
+     * @var array
+     */
+    protected $dates = [
+        'date_rendez_vous',
+        'created_at',
+        'updated_at',
+        'deleted_at',
     ];
 
     // Relations

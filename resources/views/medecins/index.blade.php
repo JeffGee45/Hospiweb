@@ -26,14 +26,18 @@
                 <tr>
                     <th class="py-3 px-6 text-left">Nom Complet</th>
                     <th class="py-3 px-6 text-left">Spécialité</th>
+                    <th class="py-3 px-6 text-left">Email</th>
+                    <th class="py-3 px-6 text-left">Téléphone</th>
                     <th class="py-3 px-6 text-center">Actions</th>
                 </tr>
             </thead>
             <tbody class="text-gray-600 text-sm font-light">
                 @forelse ($medecins as $medecin)
                     <tr class="border-b border-gray-200 hover:bg-gray-100">
-                        <td class="py-3 px-6 text-left whitespace-nowrap">Dr. {{ $medecin->prenom }} {{ $medecin->nom }}</td>
-                        <td class="py-3 px-6 text-left">{{ $medecin->specialite }}</td>
+                        <td class="py-3 px-6 text-left whitespace-nowrap">Dr. {{ $medecin->name }}</td>
+                        <td class="py-3 px-6 text-left">{{ $medecin->specialite ?? 'Non spécifiée' }}</td>
+                        <td class="py-3 px-6 text-left">{{ $medecin->email }}</td>
+                        <td class="py-3 px-6 text-left">{{ $medecin->telephone ?? 'Non renseigné' }}</td>
                         <td class="py-3 px-6 text-center">
                             <div class="flex item-center justify-center">
                                 <a href="{{ route('medecins.edit', $medecin->id) }}" class="w-6 mr-2 transform hover:text-purple-500 hover:scale-110">

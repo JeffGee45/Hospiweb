@@ -10,17 +10,25 @@
             @method('PUT')
 
             <div class="mb-4">
-                <label for="prenom" class="block text-gray-700 text-sm font-bold mb-2">Prénom</label>
-                <input type="text" id="prenom" name="prenom" value="{{ old('prenom', $medecin->prenom) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('prenom') border-red-500 @enderror" required>
-                @error('prenom')
+                <label for="name" class="block text-gray-700 text-sm font-bold mb-2">Nom complet</label>
+                <input type="text" id="name" name="name" value="{{ old('name', $medecin->name) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('name') border-red-500 @enderror" required>
+                @error('name')
                     <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
                 @enderror
             </div>
 
             <div class="mb-4">
-                <label for="nom" class="block text-gray-700 text-sm font-bold mb-2">Nom</label>
-                <input type="text" id="nom" name="nom" value="{{ old('nom', $medecin->nom) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('nom') border-red-500 @enderror" required>
-                @error('nom')
+                <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                <input type="email" id="email" name="email" value="{{ old('email', $medecin->email) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('email') border-red-500 @enderror" required>
+                @error('email')
+                    <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="mb-4">
+                <label for="telephone" class="block text-gray-700 text-sm font-bold mb-2">Téléphone</label>
+                <input type="text" id="telephone" name="telephone" value="{{ old('telephone', $medecin->telephone) }}" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('telephone') border-red-500 @enderror">
+                @error('telephone')
                     <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
                 @enderror
             </div>
