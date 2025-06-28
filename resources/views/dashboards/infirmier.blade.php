@@ -71,7 +71,7 @@
                 <a href="{{ route('soins.index') }}" class="block w-full text-center bg-cyan-600 text-white py-3 px-4 rounded-lg hover:bg-cyan-700 transition-colors duration-300">
                     Gestion des Soins
                 </a>
-                <a href="{{ route('patients.index') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">
+                <a href="{{ route('dashboard') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">
                     Voir tous les Patients
                 </a>
             </div>

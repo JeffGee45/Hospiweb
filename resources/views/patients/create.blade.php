@@ -15,8 +15,13 @@
                 </div>
             @endif
 
-            <form action="{{ route('patients.store') }}" method="POST" class="space-y-5">
-                @csrf
+            @php
+    $storeRoute = auth()->user()->role === 'Admin' ? route('admin.patients.store') : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.store') : null);
+@endphp
+
+@if($storeRoute)
+    <form action="{{ $storeRoute }}" method="POST" class="space-y-5">
+        @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="nom" class="block font-semibold text-gray-700 mb-1">Nom</label>
@@ -104,7 +109,10 @@
                         </svg>
                         Enregistrer le patient
                     </button>
-                    <a href="{{ route('patients.index') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gray-100 text-gray-600 text-base font-semibold shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-150 w-full md:w-auto">
+                    @php
+                        $indexRoute = auth()->user()->role === 'Admin' ? route('admin.patients.index') : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.index') : route('dashboard'));
+                    @endphp
+                    <a href="{{ $indexRoute }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg bg-gray-100 text-gray-600 text-base font-semibold shadow hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-150 w-full md:w-auto">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
                         </svg>
@@ -112,5 +120,11 @@
                     </a>
                 </div>
             </form>
+        @else
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <strong class="font-bold">Accès non autorisé.</strong>
+                <span class="block sm:inline">Vous n'avez pas les permissions nécessaires pour créer un patient.</span>
+            </div>
+        @endif
         </div>
     @endsection

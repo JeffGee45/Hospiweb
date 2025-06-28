@@ -14,13 +14,13 @@
                 <strong>Dernière mise à jour :</strong> {{ $user->updated_at->format('d/m/Y H:i') }}
             </p>
             <div class="mt-3">
-                <a href="{{ route('users.edit', $user) }}" class="btn btn-warning">Modifier</a>
-                <form action="{{ route('users.destroy', $user) }}" method="POST" style="display: inline-block;">
+                <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-warning">Modifier</a>
+                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" style="display: inline-block;">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">Supprimer</button>
                 </form>
-                <a href="{{ route('users.index') }}" class="btn btn-secondary">Retour à la liste</a>
+                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Retour à la liste</a>
             </div>
         </div>
     </div>

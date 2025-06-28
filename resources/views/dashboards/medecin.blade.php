@@ -15,7 +15,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Rendez-vous Aujourd'hui</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $todayAppointmentsCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['todayAppointmentsCount'] }}</p>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Patients Hospitalisés</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $hospitalizedPatientsCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['hospitalizedPatientsCount'] }}</p>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        @forelse ($upcomingAppointments as $rdv)
+                        @forelse ($stats['upcomingAppointments'] as $rdv)
                             <tr>
                                 <td class="py-4 px-4 whitespace-nowrap font-medium text-gray-900">{{ $rdv->patient->name ?? 'N/A' }}</td>
                                 <td class="py-4 px-4 whitespace-nowrap text-gray-500">{{ \Carbon\Carbon::parse($rdv->date_heure)->format('H:i') }}</td>
@@ -68,11 +68,11 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Accès Rapide</h2>
             <div class="space-y-4">
-                <a href="{{ route('patients.index') }}" class="block w-full text-center bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                <a href="{{ route('medecin.patients.index') }}" class="block w-full text-center bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">
                     Gérer les Patients
                 </a>
-                <a href="{{ route('rendez-vous.index') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">
-                    Voir tous les Rendez-vous
+                <a href="{{ route('medecin.rendez-vous.index') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">
+                    Voir mes Rendez-vous
                 </a>
             </div>
         </div>

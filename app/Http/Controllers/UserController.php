@@ -47,7 +47,7 @@ class UserController extends Controller
 
                 Log::info('Utilisateur créé : ' . $user->name . ' (ID: ' . $user->id . ') par ' . Auth::user()->name);
 
-        return redirect()->route('users.index')->with('success', 'Utilisateur créé avec succès.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur créé avec succès.');
     }
 
     /**
@@ -89,7 +89,7 @@ class UserController extends Controller
 
                 Log::info('Utilisateur mis à jour : ' . $user->name . ' (ID: ' . $user->id . ') par ' . Auth::user()->name);
 
-        return redirect()->route('users.index')->with('success', 'Utilisateur mis à jour avec succès.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur mis à jour avec succès.');
     }
 
     /**
@@ -99,6 +99,6 @@ class UserController extends Controller
     {
                 Log::warning('Utilisateur supprimé : ' . $user->name . ' (ID: ' . $user->id . ') par ' . Auth::user()->name);
         $user->delete();
-        return redirect()->route('users.index')->with('success', 'Utilisateur supprimé avec succès.');
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur supprimé avec succès.');
     }
 }

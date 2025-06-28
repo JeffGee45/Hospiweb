@@ -80,13 +80,13 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Accès Rapide</h2>
             <div class="space-y-4">
-                <a href="{{ route('rendez-vous.index') }}" class="block w-full text-center bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">
+                <a href="{{ route('secretaire.rendez-vous.index') }}" class="block w-full text-center bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">
                     Gérer les Rendez-vous
                 </a>
-                <a href="{{ route('patients.create') }}" class="block w-full text-center bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300">
+                <a href="{{ route('secretary.patients.create') }}" class="block w-full text-center bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300">
                     Inscrire un Patient
                 </a>
-                <a href="{{ route('patients.index') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">
+                <a href="{{ route('secretary.patients.index') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">
                     Voir tous les Patients
                 </a>
             </div>

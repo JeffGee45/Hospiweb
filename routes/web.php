@@ -11,6 +11,7 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\Auth\RegisterController; 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\UserController;
@@ -47,137 +48,61 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
 
     Route::get('/get-started', [GetStartedController::class, 'show'])->name('get-started');
     Route::post('/get-started', [GetStartedController::class, 'complete'])->name('get-started.complete');
-    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    // Route centrale pour le tableau de bord, redirige selon le rôle
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // --- GROUPES DE ROUTES PAR RÔLE ---
 
-    /*
-    |--------------------------------------------------------------------------
-    | Routes pour l'Administrateur
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware('role:Admin')->group(function () {
-        // Gestion des utilisateurs
+    Route::prefix('admin')->middleware('role:Admin')->name('admin.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'admin'])->name('dashboard');
         Route::resource('users', UserController::class);
-        
-        // Gestion des médecins
         Route::resource('medecins', MedecinController::class);
-        
-        // Rapports et statistiques
-        Route::prefix('rapports')->group(function () {
-            Route::get('/', [RapportController::class, 'index'])->name('rapports.index');
-            Route::get('export/consultations-par-medecin', [RapportController::class, 'exportConsultationsParMedecin'])->name('rapports.export.consultations');
-            Route::get('export/hospitalisations-en-cours', [RapportController::class, 'exportHospitalisationsEnCours'])->name('rapports.export.hospitalisations');
-            Route::get('export/medicaments-prescrits', [RapportController::class, 'exportMedicamentsPrescrits'])->name('rapports.export.medicaments');
-            Route::get('export/statistiques-patients', [RapportController::class, 'exportStatistiquesPatients'])->name('rapports.export.patients');
-        });
-        
-        // Gestion des patients (accès complet)
-        Route::resource('patients', PatientController::class)->except(['create', 'store']);
+        Route::resource('patients', PatientController::class);
+        Route::resource('rendez-vous', RendezVousController::class);
+        Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
+        Route::resource('rapports', RapportController::class)->only(['index']);
     });
 
-    /*
-    |--------------------------------------------------------------------------
-    | Routes pour le Médecin
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware('role:Medecin')->group(function () {
-        // Dossiers médicaux
-        Route::get('patients/{patient}/dossier', [DossierMedicalController::class, 'show'])->name('dossiers.show');
-        Route::post('patients/{patient}/dossier', [DossierMedicalController::class, 'store'])->name('dossiers.store');
-        
-        // Consultations
-        Route::resource('patients.consultations', ConsultationController::class)->shallow()->except(['destroy']);
-        
-        // Hospitalisations
-        Route::resource('patients.hospitalisations', HospitalisationController::class)->shallow()->except(['destroy']);
-        
-        // Prescriptions
-        Route::get('consultations/{consultation}/prescriptions/create', [PrescriptionController::class, 'create'])->name('consultations.prescriptions.create');
-        Route::post('consultations/{consultation}/prescriptions', [PrescriptionController::class, 'store'])->name('consultations.prescriptions.store');
-        
-        // Voir les patients (lecture seule)
-        Route::get('patients', [PatientController::class, 'index'])->name('patients.index');
-        Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
-    });
-
-    /*
-    |--------------------------------------------------------------------------
-    | Routes pour la Secrétaire
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware('role:Secretaire')->group(function () {
-        // Gestion des rendez-vous
+    Route::prefix('secretaire')->middleware('role:Secretaire')->name('secretaire.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'secretaire'])->name('dashboard');
+        Route::resource('patients', PatientController::class)->except(['destroy']);
         Route::resource('rendez-vous', RendezVousController::class)->except(['destroy']);
+        Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
+    });
+
+    Route::prefix('medecin')->middleware('role:Medecin')->name('medecin.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'medecin'])->name('dashboard');
+        Route::resource('patients', PatientController::class)->only(['index', 'show']);
         
-        // Gestion des patients (création et mise à jour)
-        Route::get('patients', [PatientController::class, 'index'])->name('patients.index');
-        Route::get('patients/create', [PatientController::class, 'create'])->name('patients.create');
-        Route::post('patients', [PatientController::class, 'store'])->name('patients.store');
-        Route::get('patients/{patient}/edit', [PatientController::class, 'edit'])->name('patients.edit');
-        Route::put('patients/{patient}', [PatientController::class, 'update'])->name('patients.update');
-        Route::patch('patients/{patient}', [PatientController::class, 'update']);
-    });
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Routes pour l'Infirmier
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware('role:Infirmier')->group(function () {
-        // Gestion des soins
-        Route::get('soins', [\App\Http\Controllers\SoinsController::class, 'index'])->name('soins.index');
+        // Routes pour les rendez-vous des médecins
+        Route::resource('rendez-vous', \App\Http\Controllers\Medecin\RendezVousController::class)->only(['index', 'show']);
+        Route::post('rendez-vous/{rendez_vous}/annuler', [\App\Http\Controllers\Medecin\RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
         
-        // Voir les patients (lecture seule)
-        Route::get('patients', [PatientController::class, 'index'])->name('patients.index');
-        Route::get('patients/{patient}', [PatientController::class, 'show'])->name('patients.show');
-    });
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Routes pour le Pharmacien
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware('role:Pharmacien')->group(function () {
-        // Gestion de la pharmacie
-        Route::get('pharmacie', [\App\Http\Controllers\PharmacieController::class, 'index'])->name('pharmacie.index');
-    });
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Routes pour le Caissier
-    |--------------------------------------------------------------------------
-    */
-    Route::middleware('role:Caissier')->group(function () {
-        // Gestion de la facturation
-        Route::get('facturation', [\App\Http\Controllers\FacturationController::class, 'index'])->name('facturation.index');
-    });
-    
-    /*
-    |--------------------------------------------------------------------------
-    | Routes partagées (si nécessaire)
-    |--------------------------------------------------------------------------
-    */
-    // Aucune route partagée pour l'instant - toutes les routes sont spécifiques aux rôles
-
-    /*
-    |--------------------------------------------------------------------------
-    | Routes à implémenter
-    |--------------------------------------------------------------------------
-    */
-    // Routes pour l'Infirmier(e)
-    // Routes pour l'Infirmier
-    Route::middleware('role:Infirmier')->group(function () {
-        Route::get('soins', [\App\Http\Controllers\SoinsController::class, 'index'])->name('soins.index');
+        // Routes pour l'exportation iCal
+        Route::get('rendez-vous/export/ical', [\App\Http\Controllers\Medecin\IcalController::class, 'index'])->name('rendez-vous.export.ical');
+        Route::get('rendez-vous/{rendez_vous}/export/ical', [\App\Http\Controllers\Medecin\IcalController::class, 'show'])->name('rendez-vous.show.ical');
+        
+        Route::resource('consultations', ConsultationController::class);
+        Route::resource('hospitalisations', HospitalisationController::class);
     });
 
-    // Routes pour le Pharmacien
-    Route::middleware('role:Pharmacien')->group(function () {
-        Route::get('pharmacie', [\App\Http\Controllers\PharmacieController::class, 'index'])->name('pharmacie.index');
+    Route::prefix('patient')->middleware('role:Patient')->name('patient.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'patient'])->name('dashboard');
+        Route::resource('rendez-vous', RendezVousController::class)->only(['index', 'show']);
     });
 
-    // Routes pour le Caissier
-    Route::middleware('role:Caissier')->group(function () {
-        Route::get('facturation', [\App\Http\Controllers\FacturationController::class, 'index'])->name('facturation.index');
+    Route::prefix('infirmier')->middleware('role:Infirmier|Infirmier(e)')->name('infirmier.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'infirmier'])->name('dashboard');
+        Route::resource('soins', App\Http\Controllers\SoinsController::class);
+    });
+
+    Route::prefix('pharmacien')->middleware('role:Pharmacien')->name('pharmacien.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'pharmacien'])->name('dashboard');
+        Route::get('pharmacie', [App\Http\Controllers\PharmacieController::class, 'index'])->name('pharmacie.index');
+    });
+
+    Route::prefix('caissier')->middleware('role:Caissier')->name('caissier.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'caissier'])->name('dashboard');
+        Route::get('facturation', [App\Http\Controllers\FacturationController::class, 'index'])->name('facturation.index');
     });
 });

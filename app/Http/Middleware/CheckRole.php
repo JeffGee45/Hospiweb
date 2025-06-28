@@ -30,14 +30,15 @@ class CheckRole
 
         // Vérifier si l'utilisateur a l'un des rôles requis
         foreach ($roles as $role) {
-            // Gérer les rôles multiples séparés par des virgules
-            $roleList = explode(',', $role);
-            
-            foreach ($roleList as $r) {
-                $r = trim($r);
-                if ($user->role === $r) {
-                    return $next($request);
-                }
+            // Explode the string by '|' to get individual roles
+            $requiredRoles = explode('|', $role);
+
+            // Trim whitespace from each role in the list
+            $trimmedRoles = array_map('trim', $requiredRoles);
+
+            // Check if the user's role is in the list of required roles
+            if (in_array($user->role, $trimmedRoles)) {
+                return $next($request);
             }
         }
 

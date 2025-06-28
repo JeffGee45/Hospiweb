@@ -4,7 +4,11 @@
     <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
         <div class="flex flex-wrap justify-between gap-3 p-4">
             <p class="text-[#111518] tracking-light text-[32px] font-bold leading-tight min-w-72">Patients</p>
-            <a href="{{ route('patients.create') }}"
+            @php
+                $createRoute = auth()->user()->role === 'Admin' ? route('admin.patients.create') : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.create') : null);
+            @endphp
+            @if($createRoute)
+            <a href="{{ $createRoute }}"
                 class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white text-base font-semibold shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-150">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     stroke-width="2">
@@ -12,12 +16,17 @@
                 </svg>
                 Ajouter un patient
             </a>
+            @endif
         </div>
         <div class="px-4 py-3">
             <label class="flex flex-col min-w-40 h-12 w-full">
                 <div class="flex w-full flex-1 items-stretch rounded-lg h-full">
 
-                    <form method="GET" action="{{ route('patients.index') }}"
+                    @php
+    $indexRoute = auth()->user()->role === 'Admin' ? route('admin.patients.index') : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.index') : null);
+@endphp
+@if($indexRoute)
+<form method="GET" action="{{ $indexRoute }}"
                         class="flex items-center justify-center w-full max-w-xl mx-auto mt-6 mb-8">
                         <div class="relative flex w-full">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -37,6 +46,7 @@
                             </button>
                         </div>
                     </form>
+                    @endif
                 </div>
             </label>
         </div>
@@ -108,46 +118,55 @@
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
                                     <div class="flex items-center gap-4">
+    @php
+        $showRoute = auth()->user()->role === 'Admin' ? route('admin.patients.show', $patient->id) : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.show', $patient->id) : null);
+    @endphp
+    @if($showRoute)
+    <a href="{{ $showRoute }}"
+        class="inline-flex items-center justify-center p-2 bg-blue-50 text-blue-600 rounded-lg shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-150"
+        title="Voir le patient">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z" />
+        </svg>
+    </a>
+    @endif
 
+    @php
+        $editRoute = auth()->user()->role === 'Admin' ? route('admin.patients.edit', $patient->id) : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.edit', $patient->id) : null);
+    @endphp
+    @if($editRoute)
+    <a href="{{ $editRoute }}"
+        class="inline-flex items-center justify-center p-2 bg-green-50 text-green-600 rounded-lg shadow-sm hover:bg-green-100 hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-150"
+        title="Modifier le patient">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2a2 2 0 01-2-2 2 2 0 012-2 2 2 0 012 2v2h1.414a2 2 0 011.414 1.414l1.414-1.414a2 2 0 01.828-2.828V5z" />
+        </svg>
+    </a>
+    @endif
 
-                                        <a href="{{ route('patients.show', $patient->id) }}"
-                                            class="inline-flex items-center justify-center p-2 bg-blue-50 text-blue-600 rounded-lg shadow-sm hover:bg-blue-100 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-150"
-                                            title="Voir le patient">
-                                            <!-- Heroicons Eye -->
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M2.458 12C3.732 7.943 7.522 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z" />
-                                            </svg>
-                                        </a>
-                                        <a href="{{ route('patients.edit', $patient->id) }}"
-                                            class="inline-flex items-center justify-center p-2 bg-green-50 text-green-600 rounded-lg shadow-sm hover:bg-green-100 hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-300 transition duration-150"
-                                            title="Modifier le patient">
-                                            <!-- Heroicons Pencil -->
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2a2 2 0 01-2-2 2 2 0 012-2 2 2 0 012 2v2h1.414a2 2 0 011.414 1.414l1.414-1.414a2 2 0 01.828-2.828V5z" />
-                                            </svg>
-                                        </a>
-                                        <form action="{{ route('patients.destroy', $patient->id) }}" method="POST"
-                                            onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce patient ?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="inline-flex items-center justify-center p-2 bg-red-50 text-red-600 rounded-lg shadow-sm hover:bg-red-100 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-150"
-                                                title="Supprimer le patient">
-                                                <!-- Heroicons Trash -->
-                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
+    @if(auth()->user()->role === 'Admin')
+    <form action="{{ route('admin.patients.destroy', $patient->id) }}" method="POST" class="inline-block"
+        onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer définitivement le patient {{ addslashes($patient->prenom) }} {{ addslashes($patient->nom) }} ? Toutes les données associées seront perdues.');">
+        @csrf
+        @method('DELETE')
+        <button type="submit"
+            class="inline-flex items-center justify-center p-2 bg-red-50 text-red-600 rounded-lg shadow-sm hover:bg-red-100 hover:text-red-800 focus:outline-none focus:ring-2 focus:ring-red-300 transition duration-150"
+            title="Supprimer le patient">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+        </button>
+    </form>
+    @endif
+</div>
                                 </td>
                             </tr>
                         @endforeach

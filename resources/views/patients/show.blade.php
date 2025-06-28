@@ -2,11 +2,7 @@
 
 @section('content')
     <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-        {{-- <div class="flex justify-between items-center p-4">
-            <h2 class="text-2xl font-bold">Détails du Patient</h2>
-            <a href="{{ route('patients.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Retour
-                à la liste</a>
-        </div> --}}
+
 
         <div class="bg-white shadow-xl rounded-2xl p-8 mb-6">
             <!-- En-tête Patient -->
@@ -34,15 +30,34 @@
                         </span>
                     </div>
                 </div>
-                <div class="flex gap-2 mt-4 md:mt-0">
-                    <a href="{{ route('patients.edit', $patient->id) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-500 text-white font-semibold shadow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-300 transition duration-150" title="Modifier">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z" /></svg>
-                        Modifier
-                    </a>
-                    <a href="{{ route('patients.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-150" title="Retour à la liste">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
-                        Retour
-                    </a>
+                                <div class="flex gap-2 mt-4 md:mt-0">
+                    @php
+                        $userRole = auth()->user()->role;
+                        $rolePrefix = null;
+                        if (in_array($userRole, ['Admin', 'Secretaire', 'Medecin'])) {
+                            $rolePrefix = strtolower($userRole);
+                        }
+                    @endphp
+
+                    @if($rolePrefix)
+                        {{-- Seuls Admin et Secrétaire peuvent modifier --}}
+                        @if(in_array($userRole, ['Admin', 'Secretaire']))
+                            <a href="{{ route($rolePrefix . '.patients.edit', $patient->id) }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-500 text-white font-semibold shadow hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-300 transition duration-150" title="Modifier">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z" /></svg>
+                                Modifier
+                            </a>
+                        @endif
+
+                        <a href="{{ route($rolePrefix . '.patients.index') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-150" title="Retour à la liste">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                            Retour
+                        </a>
+                    @else
+                        <a href="{{ route('dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 transition duration-150" title="Retour au tableau de bord">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg>
+                            Retour
+                        </a>
+                    @endif
                 </div>
             </div>
 
