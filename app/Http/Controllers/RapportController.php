@@ -99,4 +99,12 @@ class RapportController extends Controller
         $pdf = Pdf::loadView('rapports.pdf.statistiques-patients', ['data' => $data]);
         return $pdf->download('rapport-statistiques-patients-' . date('Y-m-d') . '.pdf');
     }
+
+    /**
+     * Alias pour exportStatistiquesPatients pour la cohérence des noms de routes
+     */
+    public function exportStatistiques()
+    {
+        return $this->exportStatistiquesPatients();
+    }
 }

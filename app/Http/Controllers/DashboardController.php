@@ -46,12 +46,20 @@ class DashboardController extends Controller
     public function admin()
     {
         $user = Auth::user();
+        $today = now()->format('Y-m-d');
+        
         $stats = [
             'totalPatients' => Patient::count(),
             'totalAppointments' => RendezVous::count(),
             'totalUsers' => User::count(),
-            'recentAppointments' => RendezVous::with(['patient', 'medecin'])->latest()->take(5)->get(),
+            'totalMedecins' => User::where('role', 'Medecin')->count(),
+            'todayAppointments' => RendezVous::whereDate('date_rendez_vous', $today)->count(),
+            'recentAppointments' => RendezVous::with(['patient', 'medecin'])
+                ->latest()
+                ->take(5)
+                ->get(),
         ];
+        
         return view('dashboards.admin', compact('stats', 'user'));
     }
 

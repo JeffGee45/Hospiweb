@@ -15,7 +15,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Patients Hospitalisés</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $hospitalizedPatientsCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['hospitalizedPatientsCount'] }}</p>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Soins prévus (Aujourd'hui)</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $todayCaresCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['todayCaresCount'] }}</p>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        @forelse ($recentlyAdmittedPatients as $patient)
+                        @forelse ($stats['recentlyAdmittedPatients'] as $patient)
                             <tr>
                                 <td class="py-4 px-4 whitespace-nowrap font-medium text-gray-900">{{ $patient->name }}</td>
                                 <td class="py-4 px-4 whitespace-nowrap text-gray-500">{{ $patient->created_at->format('d/m/Y') }}</td>
@@ -68,7 +68,7 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Accès Rapide</h2>
             <div class="space-y-4">
-                <a href="{{ route('soins.index') }}" class="block w-full text-center bg-cyan-600 text-white py-3 px-4 rounded-lg hover:bg-cyan-700 transition-colors duration-300">
+                <a href="{{ route('infirmier.soins.index') }}" class="block w-full text-center bg-cyan-600 text-white py-3 px-4 rounded-lg hover:bg-cyan-700 transition-colors duration-300">
                     Gestion des Soins
                 </a>
                 <a href="{{ route('dashboard') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">

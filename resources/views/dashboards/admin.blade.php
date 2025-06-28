@@ -20,7 +20,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500">Utilisateurs</p>
-                <p class="text-2xl font-semibold text-gray-800">{{ $totalUsers }}</p>
+                <p class="text-2xl font-semibold text-gray-800">{{ $stats['totalUsers'] }}</p>
             </div>
         </div>
 
@@ -33,7 +33,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500">Médecins</p>
-                <p class="text-2xl font-semibold text-gray-800">{{ $totalMedecins }}</p>
+                <p class="text-2xl font-semibold text-gray-800">{{ $stats['totalMedecins'] ?? 0 }}</p>
             </div>
         </div>
 
@@ -46,7 +46,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500">Patients</p>
-                <p class="text-2xl font-semibold text-gray-800">{{ $totalPatients }}</p>
+                <p class="text-2xl font-semibold text-gray-800">{{ $stats['totalPatients'] }}</p>
             </div>
         </div>
 
@@ -59,7 +59,7 @@
             </div>
             <div>
                 <p class="text-sm font-medium text-gray-500">RDV Aujourd'hui</p>
-                <p class="text-2xl font-semibold text-gray-800">{{ $todayAppointments }}</p>
+                <p class="text-2xl font-semibold text-gray-800">{{ $stats['todayAppointments'] }}</p>
             </div>
         </div>
     </div>
@@ -102,10 +102,10 @@
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold text-gray-800">Rapports et Statistiques</h2>
-                <a href="{{ route('rapports.index') }}" class="text-sm text-blue-600 hover:text-blue-800">Voir tout</a>
+                <a href="{{ route('admin.rapports.index') }}" class="text-sm text-blue-600 hover:text-blue-800">Voir tout</a>
             </div>
             <div class="space-y-4">
-                <a href="{{ route('rapports.export.consultations') }}" class="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
+                <a href="#" class="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
                     <div class="p-2 bg-purple-100 rounded-lg mr-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -116,7 +116,7 @@
                         <p class="text-sm text-gray-500">Générer un rapport des consultations par médecin</p>
                     </div>
                 </a>
-                <a href="{{ route('rapports.export.hospitalisations') }}" class="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
+                <a href="#" class="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
                     <div class="p-2 bg-yellow-100 rounded-lg mr-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -180,7 +180,7 @@
                 </h3>
                 <p class="text-gray-600 mt-2">Ajouter, modifier ou désactiver des comptes utilisateurs.</p>
             </a>
-            <a href="{{ route('rapports.index') }}" class="p-6 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all duration-300">
+            <a href="{{ route('admin.rapports.index') }}" class="p-6 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all duration-300">
                 <h3 class="text-lg font-semibold text-gray-900 flex items-center">
                     <svg class="h-6 w-6 text-blue-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

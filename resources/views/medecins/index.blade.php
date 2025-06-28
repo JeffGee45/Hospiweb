@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 py-8">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold text-gray-800">Gestion des Médecins</h1>
-        <a href="{{ route('medecins.create') }}"
+        <a href="{{ route('admin.medecins.create') }}"
            class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white text-base font-semibold shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-150">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16 14v2a4 4 0 01-8 0v-2m8-4a4 4 0 11-8 0 4 4 0 018 0z" />
@@ -40,12 +40,12 @@
                         <td class="py-3 px-6 text-left">{{ $medecin->telephone ?? 'Non renseigné' }}</td>
                         <td class="py-3 px-6 text-center">
                             <div class="flex item-center justify-center">
-                                <a href="{{ route('medecins.edit', $medecin->id) }}" class="w-6 mr-2 transform hover:text-purple-500 hover:scale-110">
+                                <a href="{{ route('admin.medecins.edit', $medecin->id) }}" class="w-6 mr-2 transform hover:text-purple-500 hover:scale-110">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z" />
                                     </svg>
                                 </a>
-                                <form action="{{ route('medecins.destroy', $medecin->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce médecin ?');">
+                                <form action="{{ route('admin.medecins.destroy', $medecin->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce médecin ?');">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="w-6 mr-2 transform hover:text-red-500 hover:scale-110 cursor-pointer">

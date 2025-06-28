@@ -61,6 +61,10 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         Route::resource('rendez-vous', RendezVousController::class);
         Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
         Route::resource('rapports', RapportController::class)->only(['index']);
+        Route::get('rapports/export/consultations', [RapportController::class, 'exportConsultationsParMedecin'])->name('rapports.export.consultations');
+        Route::get('rapports/export/hospitalisations', [RapportController::class, 'exportHospitalisationsEnCours'])->name('rapports.export.hospitalisations');
+        Route::get('rapports/export/medicaments', [RapportController::class, 'exportMedicamentsPrescrits'])->name('rapports.export.medicaments');
+        Route::get('rapports/export/statistiques', [RapportController::class, 'exportStatistiques'])->name('rapports.export.statistiques');
     });
 
     Route::prefix('secretaire')->middleware('role:Secretaire')->name('secretaire.')->group(function () {
