@@ -31,13 +31,56 @@
     <script src="https://kit.fontawesome.com/2d3c5f8e8b.js" crossorigin="anonymous"></script>
 </head>
 <body>
+    <!-- Barre de navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{{ route('home') }}">
+                <img src="{{ asset('images/hospital-logo.svg') }}" alt="Logo Hospiweb" height="40" class="d-inline-block align-text-top">
+                <span class="ms-2 fw-bold" style="color: #0ea5e9">Hospiweb</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">À propos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#services">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    @guest
+                        <a href="{{ route('login') }}" class="btn btn-outline-primary me-2">Connexion</a>
+                        @if (Route::has('register'))
+                            <a href="{{ route('register') }}" class="btn btn-primary">S'inscrire</a>
+                        @endif
+                    @else
+                        <a href="{{ route('dashboard') }}" class="btn btn-primary">Tableau de bord</a>
+                    @endguest
+                </div>
+            </div>
+        </div>
+    </nav>
     <!-- Bannière -->
-    <section class="hero py-5">
+    <!-- Bannière -->
+    <section class="hero py-5 mt-5">
         <div class="container text-center">
             <img src="{{ asset('images/hospital-logo.svg') }}" alt="Logo" class="mb-4" style="height:80px;">
             <h1 class="display-4 fw-bold mb-3">Bienvenue à <span style="color:#0ea5e9">Hospiweb</span></h1>
             <p class="lead mb-4">Votre plateforme moderne pour la gestion hospitalière</p>
-            <a href="{{ route('login') }}" class="btn btn-login btn-lg shadow">Se connecter</a>
+            @guest
+                <a href="{{ route('login') }}" class="btn btn-login btn-lg shadow me-2">Se connecter</a>
+                @if (Route::has('register'))
+                    <a href="{{ route('register') }}" class="btn btn-outline-primary btn-lg shadow">S'inscrire</a>
+                @endif
+            @else
+                <a href="{{ route('dashboard') }}" class="btn btn-login btn-lg shadow">Accéder au tableau de bord</a>
+            @endguest
         </div>
     </section>
 

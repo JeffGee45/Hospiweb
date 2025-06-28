@@ -13,8 +13,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Les seeders sont exécutés dans l'ordre de dépendance
+        $this->call([
+            UserSeeder::class,
+            TypeExamenSeeder::class,
+            ParametreExamenSeeder::class,
+            // Ajoutez d'autres seeders ici si nécessaire
+        ]);
 
+        // Si vous avez besoin de créer un utilisateur de test supplémentaire
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',

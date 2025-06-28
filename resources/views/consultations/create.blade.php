@@ -27,7 +27,7 @@
                             required>
                             <option value="">Sélectionner un médecin</option>
                             @foreach ($medecins as $medecin)
-                                <option value="{{ $medecin->id }}">{{ $medecin->prenom }} {{ $medecin->nom }} -
+                                <option value="{{ $medecin->id }}">Dr. {{ $medecin->name }} -
                                     {{ $medecin->specialite }}</option>
                             @endforeach
                         </select>

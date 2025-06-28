@@ -23,7 +23,7 @@
                         Prochains rendez-vous
                     </h2>
                     <div class="flex gap-2">
-                        <a href="{{ route('rendez-vous.index') }}"
+                        <a href="{{ route(auth()->user()->role === 'Secretaire' ? 'secretaire.rendez-vous.index' : 'medecin.rendez-vous.index') }}"
                             class="inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm font-medium transition">
                             <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -31,7 +31,7 @@
                             </svg>
                             Voir tous
                         </a>
-                        <a href="{{ route('rendez-vous.create') }}"
+                        <a href="{{ route(auth()->user()->role === 'Secretaire' ? 'secretaire.rendez-vous.create' : 'medecin.rendez-vous.create') }}"
                             class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-700 rounded hover:bg-green-200 text-sm font-medium transition">
                             <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />

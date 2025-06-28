@@ -43,7 +43,7 @@
                                     <td class="py-3 px-6 text-left">
                                         <a href="{{ route('consultations.show', $consultation->id) }}"
                                             class="text-blue-600 hover:underline">
-                                            Dr. {{ $consultation->medecin->prenom }} {{ $consultation->medecin->nom }}
+                                            Dr. {{ $consultation->medecin->name }}
                                         </a>
                                     </td>
                                     <td class="py-3 px-6 text-left">{{ $consultation->diagnostic ?? 'N/A' }}</td>

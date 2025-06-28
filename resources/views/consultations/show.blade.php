@@ -25,7 +25,7 @@
                 </div>
                 <div>
                     <h3 class="text-lg font-semibold text-gray-700">Médecin</h3>
-                    <p class="text-gray-600">Dr. {{ $consultation->medecin->prenom }} {{ $consultation->medecin->nom }}
+                    <p class="text-gray-600">Dr. {{ $consultation->medecin->name }}
                         ({{ $consultation->medecin->specialite }})</p>
                 </div>
                 <div>

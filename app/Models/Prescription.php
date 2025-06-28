@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Consultation;
-use App\Models\Medecin;
+use App\Models\User;
 use App\Models\PrescriptionMedicament;
 
 class Prescription extends Model
@@ -25,7 +25,7 @@ class Prescription extends Model
 
     public function medecin()
     {
-        return $this->belongsTo(Medecin::class);
+        return $this->belongsTo(User::class, 'medecin_id');
     }
 
     public function medicaments()

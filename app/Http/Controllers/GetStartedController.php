@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Routing\Controller;
 
 class GetStartedController extends Controller
@@ -14,7 +15,7 @@ class GetStartedController extends Controller
      */
     public function show()
     {
-        return view('get-started');
+        return view('get-started', ['user' => Auth::user()]);
     }
 
     /**

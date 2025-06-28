@@ -5,7 +5,7 @@
         <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8">
             <h1 class="text-2xl font-bold text-gray-800 mb-6">Planifier un nouveau Rendez-vous</h1>
 
-            <form action="{{ route('rendez-vous.store') }}" method="POST">
+            <form action="{{ route(auth()->user()->role === 'Secretaire' ? 'secretaire.rendez-vous.store' : 'medecin.rendez-vous.store') }}" method="POST">
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="mb-4">
@@ -86,7 +86,7 @@
                         class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                         Enregistrer le Rendez-vous
                     </button>
-                    <a href="{{ route('rendez-vous.index') }}"
+                    <a href="{{ route(auth()->user()->role === 'Secretaire' ? 'secretaire.rendez-vous.index' : 'medecin.rendez-vous.index') }}"
                         class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
                         Annuler
                     </a>
