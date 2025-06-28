@@ -98,12 +98,33 @@ class DashboardController extends Controller
     public function patient()
     {
         $user = Auth::user();
+        $patient = Patient::where('user_id', $user->id)->first();
         $patientId = $user->id;
+
+        $upcomingAppointmentsQuery = RendezVous::where('patient_id', $patientId)
+            ->where('date_rendez_vous', '>', Carbon::now());
+
+        $pastAppointmentsQuery = RendezVous::where('patient_id', $patientId)
+            ->where('date_rendez_vous', '<=', Carbon::now());
+
         $stats = [
-            'upcomingAppointments' => RendezVous::where('patient_id', $patientId)->where('date_rendez_vous', '>', Carbon::now())->orderBy('date_rendez_vous', 'asc')->with('medecin')->take(5)->get(),
-            'pastAppointments' => RendezVous::where('patient_id', $patientId)->where('date_rendez_vous', '<=', Carbon::now())->orderBy('date_rendez_vous', 'desc')->with('medecin')->take(5)->get(),
+            'upcomingAppointmentsCount' => $upcomingAppointmentsQuery->count(),
+            'pastAppointmentsCount' => $pastAppointmentsQuery->count(),
         ];
-        return view('dashboards.patient', compact('stats', 'user'));
+
+        $upcomingAppointments = $upcomingAppointmentsQuery
+            ->with('medecin.user')
+            ->orderBy('date_rendez_vous', 'asc')
+            ->take(5)
+            ->get();
+
+        $pastAppointments = $pastAppointmentsQuery
+            ->with('medecin.user')
+            ->orderBy('date_rendez_vous', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('dashboards.patient', compact('user', 'patient', 'stats', 'upcomingAppointments', 'pastAppointments'));
     }
 
     /**

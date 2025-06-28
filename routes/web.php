@@ -92,7 +92,10 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
 
     Route::prefix('patient')->middleware('role:Patient')->name('patient.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'patient'])->name('dashboard');
-        Route::resource('rendez-vous', RendezVousController::class)->only(['index', 'show']);
+        
+        // Routes pour la gestion des rendez-vous par le patient
+        Route::resource('rendez-vous', \App\Http\Controllers\Patient\RendezVousController::class)->only(['index', 'create', 'store', 'show']);
+        Route::post('rendez-vous/{id}/annuler', [\App\Http\Controllers\Patient\RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
     });
 
     Route::prefix('infirmier')->middleware('role:Infirmier|Infirmier(e)')->name('infirmier.')->group(function () {

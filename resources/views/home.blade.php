@@ -400,7 +400,9 @@
     <h1 class="mb-3 fw-bold" style="color: #111; font-size: 1.7rem; line-height: 1.18;">Bienvenue chez Hospiweb</h1>
     <p class="mb-4" style="color: #333; font-size: 1.08rem;">Votre centre de santé de confiance à Lomé. Accédez facilement à nos soins et services médicaux.</p>
     <div class="d-flex flex-column flex-sm-row justify-content-center gap-3 mt-2 w-100">
-        <a href="#contact" class="btn btn-primary px-4 py-2 flex-fill" style="font-size: 1rem; background: #0d6efd; border: none;">Prendre rendez-vous</a>
+        <a href="{{ route('login') }}" class="btn btn-primary px-4 py-2 flex-fill" style="font-size: 1rem; background: #0d6efd; border: none;">
+            <i class="fas fa-calendar-plus me-2"></i>Prendre rendez-vous
+        </a>
         <a href="#services" class="btn btn-outline-primary px-4 py-2 flex-fill" style="font-size: 1rem; background: white; border: 1px solid #0d6efd; color: #0d6efd;">Voir nos services</a>
     </div>
 </div>
