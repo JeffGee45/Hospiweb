@@ -10,11 +10,11 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+
+    <!-- La police Figtree sera remplacée par Public Sans, chargée localement -->
 
     <!-- Styles -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS est maintenant importé via app.css -->
     <style>
         body {
             font-family: 'Figtree', sans-serif;
@@ -28,7 +28,7 @@
                 <img class="h-24 w-auto" src="{{ asset('images/hospital-logo.svg') }}" alt="Hospiweb Logo">
             </div>
             <h1 class="text-3xl font-bold text-gray-800 mb-4">
-                Bienvenue Dr. {{ Auth::user()->name }}!
+                Bienvenue {{ $user->role }} {{ $user->name }} !
             </h1>
             <p class="text-gray-600 mb-8">
                 Hospiweb est une application de gestion hospitalière conçue pour vous aider à suivre vos patients, leurs rendez-vous et leurs hospitalisations de manière simple et efficace.

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Patient;
-use App\Models\Medecin;
+use App\Models\User;
 use App\Models\Consultation;
 use Illuminate\Http\Request;
 
@@ -23,7 +23,7 @@ class ConsultationController extends Controller
      */
     public function create(Patient $patient)
     {
-        $medecins = Medecin::all();
+        $medecins = User::where('role', 'Médecin')->get();
         return view('consultations.create', compact('patient', 'medecins'));
     }
 
@@ -33,7 +33,7 @@ class ConsultationController extends Controller
     public function store(Request $request, Patient $patient)
     {
         $request->validate([
-            'medecin_id' => 'required|exists:medecins,id',
+            'medecin_id' => 'required|exists:users,id',
             'date_consultation' => 'required|date',
             'diagnostic' => 'nullable|string|max:255',
             'notes' => 'nullable|string',

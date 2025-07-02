@@ -33,8 +33,21 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-
-            return redirect()->intended('/get-started');
+            
+            $user = Auth::user();
+            
+            // Redirection en fonction du rôle
+            switch ($user->role) {
+                case 'Admin':
+                case 'Secretaire':
+                case 'Infirmier':
+                case 'Pharmacien':
+                case 'Caissier':
+                case 'Médecin':
+                    return redirect()->route('dashboard');
+                default:
+                    return redirect()->intended('dashboard');
+            }
         }
 
         return back()->withErrors([
@@ -56,6 +69,6 @@ class LoginController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect('/'); // Redirection vers la page d'accueil après déconnexion
     }
 }

@@ -2,13 +2,14 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
+    <script src="https://cdn.tailwindcss.com"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Connexion - Hospiweb</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS est maintenant importé via app.css -->
 </head>
 
 <body class="bg-gray-100">

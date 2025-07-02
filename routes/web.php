@@ -11,8 +11,12 @@ use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\MedecinController;
 use App\Http\Controllers\Auth\RegisterController; 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RendezVousController;
 use App\Http\Controllers\RapportController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\FileUploadController;
 
 // Page d'accueil
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -28,40 +32,77 @@ Route::middleware('guest')->group(function () {
 
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-// Routes pour la gestion des patients (protégées par l'authentification)
+// Routes pour le téléchargement de fichiers
+Route::middleware('auth')->group(function () {
+    Route::post('/upload-file', [FileUploadController::class, 'upload'])->name('file.upload');
+    Route::delete('/delete-file', [FileUploadController::class, 'delete'])->name('file.delete');
+});
+
+// Routes protégées par l'authentification
 Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(function () {
+    // Profil utilisateur
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
     Route::get('/get-started', [GetStartedController::class, 'show'])->name('get-started');
     Route::post('/get-started', [GetStartedController::class, 'complete'])->name('get-started.complete');
-    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    // Route centrale pour le tableau de bord, redirige selon le rôle
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::post('patients/{patient}/change-status', [App\Http\Controllers\PatientController::class, 'changeStatus'])->name('patients.changeStatus');
-    Route::resource('patients', PatientController::class);
+    // --- GROUPES DE ROUTES PAR RÔLE ---
 
-    // Routes pour le dossier médical
-    Route::get('patients/{patient}/dossier', [\App\Http\Controllers\DossierMedicalController::class, 'show'])->name('dossiers.show');
-    Route::post('patients/{patient}/dossier', [\App\Http\Controllers\DossierMedicalController::class, 'store'])->name('dossiers.store');
+    Route::prefix('admin')->middleware('role:Admin')->name('admin.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'admin'])->name('dashboard');
+        Route::resource('users', UserController::class);
+        Route::resource('medecins', MedecinController::class);
+        Route::resource('patients', PatientController::class);
+        Route::resource('rendez-vous', RendezVousController::class);
+        Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
+        Route::resource('rapports', RapportController::class)->only(['index']);
+        Route::get('rapports/export/consultations', [RapportController::class, 'exportConsultationsParMedecin'])->name('rapports.export.consultations');
+        Route::get('rapports/export/hospitalisations', [RapportController::class, 'exportHospitalisationsEnCours'])->name('rapports.export.hospitalisations');
+        Route::get('rapports/export/medicaments', [RapportController::class, 'exportMedicamentsPrescrits'])->name('rapports.export.medicaments');
+        Route::get('rapports/export/statistiques', [RapportController::class, 'exportStatistiques'])->name('rapports.export.statistiques');
+    });
 
-    // Routes pour les consultations
-    Route::resource('patients.consultations', \App\Http\Controllers\ConsultationController::class)->shallow();
+    Route::prefix('secretaire')->middleware('role:Secretaire')->name('secretaire.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'secretaire'])->name('dashboard');
+        Route::resource('patients', PatientController::class)->except(['destroy']);
+        Route::resource('rendez-vous', RendezVousController::class)->except(['destroy']);
+        Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
+    });
 
-    // Routes pour les hospitalisations
-    Route::resource('patients.hospitalisations', HospitalisationController::class)->shallow();
+    Route::prefix('medecin')->middleware('role:Médecin')->name('medecin.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'medecin'])->name('dashboard');
+        Route::resource('patients', PatientController::class)->only(['index', 'show']);
+        
+        // Routes pour les rendez-vous des médecins
+        Route::resource('rendez-vous', \App\Http\Controllers\Medecin\RendezVousController::class)->only(['index', 'show']);
+        Route::post('rendez-vous/{rendez_vous}/annuler', [\App\Http\Controllers\Medecin\RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
+        
+        // Routes pour l'exportation iCal
+        Route::get('rendez-vous/export/ical', [\App\Http\Controllers\Medecin\IcalController::class, 'index'])->name('rendez-vous.export.ical');
+        Route::get('rendez-vous/{rendez_vous}/export/ical', [\App\Http\Controllers\Medecin\IcalController::class, 'show'])->name('rendez-vous.show.ical');
+        
+        Route::resource('consultations', ConsultationController::class);
+        Route::resource('hospitalisations', HospitalisationController::class);
+    });
 
-    // Routes pour les prescriptions liées à une consultation
-    Route::get('consultations/{consultation}/prescriptions/create', [App\Http\Controllers\PrescriptionController::class, 'create'])->name('consultations.prescriptions.create');
-    Route::post('consultations/{consultation}/prescriptions', [PrescriptionController::class, 'store'])->name('consultations.prescriptions.store');
 
-    // Routes pour la gestion des médecins
-    Route::resource('medecins', MedecinController::class);
+    Route::prefix('infirmier')->middleware('role:Infirmier|Infirmier(e)')->name('infirmier.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'infirmier'])->name('dashboard');
+        Route::resource('soins', App\Http\Controllers\SoinsController::class);
+    });
 
-    // Routes pour la gestion des rendez-vous
-    Route::post('rendez-vous/{rendez_vous}/annuler', [App\Http\Controllers\RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
-    Route::resource('rendez-vous', RendezVousController::class);
+    Route::prefix('pharmacien')->middleware('role:Pharmacien')->name('pharmacien.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'pharmacien'])->name('dashboard');
+        Route::get('pharmacie', [App\Http\Controllers\PharmacieController::class, 'index'])->name('pharmacie.index');
+    });
 
-    // Routes pour les rapports et statistiques
-    Route::get('rapports', [RapportController::class, 'index'])->name('rapports.index');
-    Route::get('rapports/export/consultations-par-medecin', [RapportController::class, 'exportConsultationsParMedecin'])->name('rapports.export.consultations');
-    Route::get('rapports/export/hospitalisations-en-cours', [RapportController::class, 'exportHospitalisationsEnCours'])->name('rapports.export.hospitalisations');
-    Route::get('rapports/export/medicaments-prescrits', [RapportController::class, 'exportMedicamentsPrescrits'])->name('rapports.export.medicaments');
-    Route::get('rapports/export/statistiques-patients', [RapportController::class, 'exportStatistiquesPatients'])->name('rapports.export.patients');
+    Route::prefix('caissier')->middleware('role:Caissier')->name('caissier.')->group(function () {
+        Route::get('dashboard', [DashboardController::class, 'caissier'])->name('dashboard');
+        Route::get('facturation', [App\Http\Controllers\FacturationController::class, 'index'])->name('facturation.index');
+    });
 });

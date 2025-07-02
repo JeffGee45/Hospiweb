@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Patient;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class PatientController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+
     /**
      * Display a listing of the resource.
      */
@@ -15,8 +24,8 @@ class PatientController extends Controller
         $query = Patient::query();
         if ($search = request('q')) {
             $query->where(function($q) use ($search) {
-                $q->where('nom', 'like', "%$search%")
-                  ->orWhere('prenom', 'like', "%$search%");
+                $q->where('nom', 'like', "%{$search}%")
+                  ->orWhere('prenom', 'like', "%{$search}%");
             });
         }
         $patients = $query->with('latestConsultation')->latest()->paginate(10)->appends(['q' => $search]);
@@ -36,23 +45,27 @@ class PatientController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
             'nom' => 'required|string|max:255',
             'prenom' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
+            'date_naissance' => 'required|date',
+            'sexe' => 'required|string|in:Homme,Femme,Autre',
             'adresse' => 'required|string|max:255',
-            'gender' => 'nullable|string',
-            'blood_group' => 'nullable|string',
-            'antecedents' => 'nullable|string',
+            'telephone' => 'required|string|max:20',
+            'email' => 'nullable|email|unique:patients,email',
+            'groupe_sanguin' => 'nullable|string|max:5',
+            'antecedents_medicaux' => 'nullable|string',
+            'allergies' => 'nullable|string',
+            'nom_contact_urgence' => 'nullable|string|max:255',
+            'telephone_contact_urgence' => 'nullable|string|max:20',
         ]);
 
-        $data = $request->all();
-        if (empty($data['status'])) {
-            $data['status'] = 'Actif';
-        }
-        Patient::create($data);
+        $validatedData['statut'] = 'Actif';
 
-        return redirect()->route('patients.index')
+        Patient::create($validatedData);
+
+        $rolePrefix = strtolower(Auth::user()->role);
+        return redirect()->route("{$rolePrefix}.patients.index")
                          ->with('success', 'Patient créé avec succès.');
     }
 
@@ -77,20 +90,48 @@ class PatientController extends Controller
      */
     public function update(Request $request, Patient $patient)
     {
-        $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
-            'adresse' => 'required|string|max:255',
-            'gender' => 'nullable|string',
-            'blood_group' => 'nullable|string',
-            'antecedents' => 'nullable|string',
-        ]);
+        try {
+            $validatedData = $request->validate([
+                'nom' => 'required|string|max:255',
+                'prenom' => 'required|string|max:255',
+                'date_naissance' => 'required|date',
+                'sexe' => 'required|string|in:Homme,Femme,Autre',
+                'adresse' => 'required|string|max:255',
+                'telephone' => 'required|string|max:20',
+                'email' => 'nullable|email|unique:patients,email,' . $patient->id,
+                'groupe_sanguin' => 'nullable|string|max:5',
+                'antecedents_medicaux' => 'nullable|string',
+                'allergies' => 'nullable|string',
+                'nom_contact_urgence' => 'nullable|string|max:255',
+                'telephone_contact_urgence' => 'nullable|string|max:20',
+                'statut' => 'sometimes|string|in:Actif,Inactif,Décédé',
+            ]);
 
-        $patient->update($request->all());
+            // Journalisation avant la mise à jour
+            Log::info('Mise à jour du patient', [
+                'patient_id' => $patient->id,
+                'anciennes_donnees' => $patient->toArray(),
+                'nouvelles_donnees' => $validatedData,
+                'effectue_par' => Auth::check() ? Auth::user()->name : 'Système',
+            ]);
 
-        return redirect()->route('patients.index')
-                         ->with('success', 'Patient mis à jour avec succès.');
+            $patient->update($validatedData);
+
+            $rolePrefix = strtolower(Auth::user()->role);
+            return redirect()->route("{$rolePrefix}.patients.index")
+                             ->with('success', 'Patient mis à jour avec succès.');
+            
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la mise à jour du patient', [
+                'patient_id' => $patient->id,
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()
+                    ->withInput()
+                    ->with('error', 'Une erreur est survenue lors de la mise à jour du patient. Veuillez réessayer.');
+        }
     }
 
     /**
@@ -98,10 +139,29 @@ class PatientController extends Controller
      */
     public function destroy(Patient $patient)
     {
-        $patient->delete();
+        try {
+            // Journalisation avant suppression
+            Log::info('Suppression du patient', [
+                'patient_id' => $patient->id,
+                'nom_complet' => $patient->prenom . ' ' . $patient->nom,
+                'effectue_par' => Auth::check() ? Auth::user()->name : 'Système',
+            ]);
 
-        return redirect()->route('patients.index')
-                         ->with('success', 'Patient supprimé avec succès.');
+            // Suppression du patient (les relations sont gérées par le modèle avec onDelete('cascade'))
+            $patient->delete();
+
+            return redirect()->route('admin.patients.index')
+                             ->with('success', 'Le patient a été supprimé avec succès.');
+                             
+        } catch (\Exception $e) {
+            Log::error('Erreur lors de la suppression du patient', [
+                'patient_id' => $patient->id,
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return back()->with('error', 'Une erreur est survenue lors de la suppression du patient. Veuillez réessayer.');
+        }
     }
 
     /**
@@ -110,10 +170,11 @@ class PatientController extends Controller
     public function changeStatus(Request $request, Patient $patient)
     {
         $request->validate([
-            'status' => 'required|string|in:Actif,Inactif,Décédé',
+            'statut' => 'required|string|in:Actif,Inactif,Décédé',
         ]);
-        $patient->status = $request->status;
-        $patient->save();
-        return redirect()->route('patients.index')->with('success', 'Statut du patient mis à jour.');
+
+        $patient->update(['statut' => $request->statut]);
+
+        return back()->with('success', 'Statut du patient mis à jour avec succès.');
     }
 }
