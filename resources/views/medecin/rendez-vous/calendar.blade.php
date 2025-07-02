@@ -23,23 +23,9 @@
     </div>
 @endsection
 
-@push('styles')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
-    <style>
-        .fc-event {
-            cursor: pointer;
-        }
-        .fc-event:hover {
-            opacity: 0.9;
-        }
-    </style>
-@endpush
-
 @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales-all.min.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
     {!! $calendar->script() !!}
-    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Rediriger vers les détails du rendez-vous lors du clic sur un événement

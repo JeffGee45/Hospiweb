@@ -1,41 +1,71 @@
 @extends('layouts.app')
 
+@section('title', 'Dossier Médical - ' . $patient->prenom . ' ' . $patient->nom)
+
 @section('content')
-    <div class="container mx-auto px-4 py-8">
-        <div class="bg-white shadow-md rounded-lg p-6">
-            <h1 class="text-2xl font-bold text-gray-800 mb-4">Dossier Médical de : {{ $patient->nom }} {{ $patient->prenom }}
-            </h1>
+<div class="container mx-auto px-4 py-6">
+    <!-- En-tête du patient -->
+    <x-patients.partials.header :patient="$patient" />
 
-            @if (session('success'))
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4"
-                    role="alert">
-                    <span class="block sm:inline">{{ session('success') }}</span>
-                </div>
-            @endif
+    <!-- Messages de succès -->
+    @if (session('success'))
+        <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded" role="alert">
+            <p class="font-bold">Succès</p>
+            <p>{{ session('success') }}</p>
+        </div>
+    @endif
 
-            <form action="{{ route('dossiers.store', $patient) }}" method="POST">
-                @csrf
-                <div class="mb-6">
-                    <label for="observation_globale" class="block text-gray-700 text-sm font-bold mb-2">Observation Globale
-                        :</label>
-                    <textarea id="observation_globale" name="observation_globale" rows="10"
-                        class="shadow-sm appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline @error('observation_globale') border-red-500 @enderror">{{ old('observation_globale', $dossier->observation_globale) }}</textarea>
-                    @error('observation_globale')
-                        <p class="text-red-500 text-xs italic mt-2">{{ $message }}</p>
-                    @enderror
-                </div>
+    <!-- Navigation par onglets -->
+    <x-patients.partials.medical-tabs :patient="$patient" active="overview" />
 
-                <div class="flex items-center justify-between">
-                    <button type="submit"
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Enregistrer les modifications
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Colonne de gauche - Informations -->
+        <div class="space-y-6">
+            <x-patients.partials.personal-info :patient="$patient" />
+            <x-patients.partials.medical-info :patient="$patient" />
+        </div>
+
+        <!-- Colonne de droite - Observations et historique -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white rounded-lg shadow p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-semibold text-gray-800">Observations générales</h2>
+                    <button type="button" class="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                            onclick="document.getElementById('editObservations').classList.toggle('hidden');">
+                        <i class="fas fa-edit mr-1"></i> Modifier
                     </button>
-                    <a href="{{ route('patients.show', $patient) }}"
-                        class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
-                        Retour au patient
-                    </a>
                 </div>
-            </form>
+                <!-- Vue des observations -->
+                <div id="viewObservations">
+                    @if($dossier->observation_globale)
+                        <div class="prose max-w-none">
+                            {!! nl2br(e($dossier->observation_globale)) !!}
+                        </div>
+                    @else
+                        <p class="text-gray-500 italic">Aucune observation pour le moment.</p>
+                    @endif
+                </div>
+                <!-- Formulaire d'édition -->
+                <div id="editObservations" class="hidden mt-4">
+                    <form action="{{ route('dossiers.update', $patient) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div>
+                            <label for="observation_globale" class="block text-sm font-medium text-gray-700">Observations</label>
+                            <textarea id="observation_globale" name="observation_globale" rows="6" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">{{ old('observation_globale', $dossier->observation_globale) }}</textarea>
+                            @error('observation_globale')
+                                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div class="flex justify-end space-x-3 pt-4">
+                            <button type="button" onclick="document.getElementById('editObservations').classList.add('hidden');" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Annuler</button>
+                            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Enregistrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <!-- Historique simplifié (consultations, etc. à compléter selon besoin) -->
         </div>
     </div>
+</div>
 @endsection

@@ -38,7 +38,7 @@ class AdminUserSeeder extends Seeder
             'email' => 'jean.dupont@hospiweb.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
-            'role' => 'Medecin',
+            'role' => 'Médecin',
             'telephone' => '+1987654321',
             'adresse' => '456 Rue des Médecins, Ville',
             'photo' => null,
@@ -52,7 +52,7 @@ class AdminUserSeeder extends Seeder
             'email' => 'marie.martin@hospiweb.com',
             'email_verified_at' => now(),
             'password' => Hash::make('password'),
-            'role' => 'Secretaire',
+            'role' => 'Secrétaire',
             'telephone' => '+1122334455',
             'adresse' => '789 Rue des Secrétaires, Ville',
             'photo' => null,
@@ -60,40 +60,6 @@ class AdminUserSeeder extends Seeder
             'remember_token' => Str::random(10),
         ]);
 
-        // Create a sample patient
-        $patientUser = \App\Models\User::create([
-            'name' => 'Pierre Dubois',
-            'email' => 'pierre.dubois@example.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-            'role' => 'Patient',
-            'telephone' => '+5566778899',
-            'adresse' => '321 Rue des Patients, Ville',
-            'photo' => null,
-            'is_active' => true,
-            'remember_token' => Str::random(10),
-        ]);
-
-        // Create patient record
-        $patient = \App\Models\Patient::create([
-            'user_id' => $patientUser->id,
-            'numero_dossier' => 'PAT' . strtoupper(Str::random(8)),
-            'date_naissance' => '1985-07-15',
-            'lieu_naissance' => 'Paris, France',
-            'sexe' => 'M',
-            'adresse' => '321 Rue des Patients, Ville',
-            'telephone' => '+5566778899',
-            'profession' => 'Ingénieur',
-            'groupe_sanguin' => 'A+',
-            'allergies' => json_encode(['Pollen', 'Arachides']),
-            'antecedents_medicaux' => json_encode(['Hypertension']),
-            'traitements_en_cours' => json_encode(['Médicament X']),
-            'nom_contact_urgence' => 'Sophie Dubois',
-            'telephone_contact_urgence' => '+5566778800',
-            'lien_contact_urgence' => 'Épouse',
-            'notes' => 'Patient régulier depuis 2020',
-            'statut' => 'actif',
-        ]);
 
         $this->command->info('=== Comptes de démonstration créés avec succès ===');
         $this->command->info('');

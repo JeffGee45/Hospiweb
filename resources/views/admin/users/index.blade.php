@@ -31,6 +31,55 @@
         </div>
     @endif
 
+    <!-- Filtres de recherche -->
+    <div class="bg-white shadow-md rounded-lg p-6 mb-6">
+        <form method="GET" action="{{ route('admin.users.index') }}" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Champ de recherche -->
+                <div>
+                    <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Recherche</label>
+                    <input type="text" name="search" id="search" value="{{ $filters['search'] ?? '' }}" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                           placeholder="Nom ou email...">
+                </div>
+                
+                <!-- Filtre par rôle -->
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Rôle</label>
+                    <select name="role" id="role" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Tous les rôles</option>
+                        @foreach($roles as $role)
+                            <option value="{{ $role }}" {{ (isset($filters['role']) && $filters['role'] == $role) ? 'selected' : '' }}>{{ $role }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                
+                <!-- Filtre par statut -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Statut</label>
+                    <select name="status" id="status" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Tous les statuts</option>
+                        <option value="1" {{ (isset($filters['status']) && $filters['status'] == '1') ? 'selected' : '' }}>Actif</option>
+                        <option value="0" {{ (isset($filters['status']) && $filters['status'] == '0') ? 'selected' : '' }}>Inactif</option>
+                    </select>
+                </div>
+                
+                <!-- Boutons d'action -->
+                <div class="flex items-end space-x-2">
+                    <button type="submit" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+                        </svg>
+                        Filtrer
+                    </button>
+                    <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Réinitialiser
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <div class="bg-white shadow-md rounded-lg overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
@@ -86,17 +135,22 @@
                             @php
                                 $roleColors = [
                                     'Admin' => 'bg-purple-100 text-purple-800',
-                                    'Medecin' => 'bg-blue-100 text-blue-800',
-                                    'Secretaire' => 'bg-green-100 text-green-800',
+                                    'Médecin' => 'bg-blue-100 text-blue-800',
+                                    'Medecin' => 'bg-blue-100 text-blue-800', // Ancienne version sans accent
+                                    'Secrétaire' => 'bg-green-100 text-green-800',
+                                    'Secretaire' => 'bg-green-100 text-green-800', // Ancienne version sans accent
                                     'Infirmier' => 'bg-yellow-100 text-yellow-800',
+                                    'Infirmier(e)' => 'bg-yellow-100 text-yellow-800', // Version alternative
                                     'Pharmacien' => 'bg-indigo-100 text-indigo-800',
                                     'Caissier' => 'bg-pink-100 text-pink-800',
                                     'default' => 'bg-gray-100 text-gray-800'
                                 ];
                                 $color = $roleColors[$user->role] ?? $roleColors['default'];
+                                $displayRole = $user->role === 'Médecin' ? 'Médecin' : 
+                                             ($user->role === 'Secretaire' ? 'Secrétaire' : $user->role);
                             @endphp
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $color }}">
-                                {{ $user->role }}
+                                {{ $displayRole }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">

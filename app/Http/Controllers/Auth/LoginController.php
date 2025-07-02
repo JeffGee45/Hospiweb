@@ -43,8 +43,7 @@ class LoginController extends Controller
                 case 'Infirmier':
                 case 'Pharmacien':
                 case 'Caissier':
-                    return redirect()->route('dashboard');
-                case 'Medecin':
+                case 'Médecin':
                     return redirect()->route('dashboard');
                 default:
                     return redirect()->intended('dashboard');

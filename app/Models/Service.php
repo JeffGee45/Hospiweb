@@ -36,7 +36,7 @@ class Service extends Model
 
     public function medecins()
     {
-        return $this->hasMany(User::class)->where('role', 'Medecin');
+        return $this->hasMany(User::class)->where('role', 'Médecin');
     }
 
     // Scopes

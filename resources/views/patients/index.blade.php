@@ -104,16 +104,8 @@
                                     @endif
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-[#637988]">
-                                    @php
-                                        $statusClasses = match ($patient->statut) {
-                                            'Actif' => 'bg-green-100 text-green-800',
-                                            'Inactif' => 'bg-yellow-100 text-yellow-800',
-                                            'Décédé' => 'bg-red-100 text-red-800',
-                                            default => 'bg-gray-100 text-gray-800',
-                                        };
-                                    @endphp
-                                    <span class="px-2 py-1 font-semibold leading-tight rounded-full {{ $statusClasses }}">
-                                        {{ $patient->statut }}
+                                    <span class="px-2 py-1 font-semibold leading-tight rounded-full {{ $patient->getStatusColor() }}">
+                                        {{ ucfirst($patient->statut) }}
                                     </span>
                                 </td>
                                 <td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">

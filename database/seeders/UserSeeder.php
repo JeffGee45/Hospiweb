@@ -12,46 +12,52 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@hospiweb.com',
-            'password' => bcrypt('password'),
-            'role' => 'Admin',
-        ]);
+        $users = [
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@hospiweb.com',
+                'password' => bcrypt('password'),
+                'role' => 'Admin',
+            ],
+            [
+                'name' => 'Doctor User',
+                'email' => 'doctor@hospiweb.com',
+                'password' => bcrypt('password'),
+                'role' => 'Médecin',
+            ],
+            [
+                'name' => 'Nurse User',
+                'email' => 'nurse@hospiweb.com',
+                'password' => bcrypt('password'),
+                'role' => 'Infirmier',
+            ],
+            [
+                'name' => 'Pharmacist User',
+                'email' => 'pharmacist@hospiweb.com',
+                'password' => bcrypt('password'),
+                'role' => 'Pharmacien',
+            ],
+            [
+                'name' => 'Cashier User',
+                'email' => 'cashier@hospiweb.com',
+                'password' => bcrypt('password'),
+                'role' => 'Caissier',
+            ],
+            [
+                'name' => 'Secretary User',
+                'email' => 'secretary@hospiweb.com',
+                'password' => bcrypt('password'),
+                'role' => 'Secretaire',
+            ],
+        ];
 
-        \App\Models\User::create([
-            'name' => 'Doctor User',
-            'email' => 'doctor@hospiweb.com',
-            'password' => bcrypt('password'),
-            'role' => 'Medecin',
-        ]);
+        foreach ($users as $userData) {
+            \App\Models\User::firstOrCreate(
+                ['email' => $userData['email']],
+                $userData
+            );
+        }
 
-        \App\Models\User::create([
-            'name' => 'Nurse User',
-            'email' => 'nurse@hospiweb.com',
-            'password' => bcrypt('password'),
-            'role' => 'Infirmier',
-        ]);
-
-        \App\Models\User::create([
-            'name' => 'Pharmacist User',
-            'email' => 'pharmacist@hospiweb.com',
-            'password' => bcrypt('password'),
-            'role' => 'Pharmacien',
-        ]);
-
-        \App\Models\User::create([
-            'name' => 'Cashier User',
-            'email' => 'cashier@hospiweb.com',
-            'password' => bcrypt('password'),
-            'role' => 'Caissier',
-        ]);
-
-        \App\Models\User::create([
-            'name' => 'Secretary User',
-            'email' => 'secretary@hospiweb.com',
-            'password' => bcrypt('password'),
-            'role' => 'Secretaire',
-        ]);
+        // Tous les utilisateurs sont maintenant gérés via la boucle ci-dessus
     }
 }

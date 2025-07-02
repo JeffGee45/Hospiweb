@@ -34,7 +34,7 @@
                     @php
                         $userRole = auth()->user()->role;
                         $rolePrefix = null;
-                        if (in_array($userRole, ['Admin', 'Secretaire', 'Medecin'])) {
+                        if (in_array($userRole, ['Admin', 'Secretaire', 'Médecin'])) {
                             $rolePrefix = strtolower($userRole);
                         }
                     @endphp

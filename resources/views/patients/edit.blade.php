@@ -37,7 +37,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="date_naissance" class="block font-semibold text-gray-700 mb-1">Date de naissance</label>
-                        <input type="date" name="date_naissance" id="date_naissance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition" value="{{ old('date_naissance', $patient->date_naissance) }}" required>
+                        <input type="date" name="date_naissance" id="date_naissance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition" value="{{ old('date_naissance', $patient->date_naissance ? $patient->date_naissance->format('Y-m-d') : '') }}" required>
                     </div>
                     <div>
                         <label for="sexe" class="block font-semibold text-gray-700 mb-1">Sexe</label>

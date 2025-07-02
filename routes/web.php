@@ -74,7 +74,7 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
     });
 
-    Route::prefix('medecin')->middleware('role:Medecin')->name('medecin.')->group(function () {
+    Route::prefix('medecin')->middleware('role:Médecin')->name('medecin.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'medecin'])->name('dashboard');
         Route::resource('patients', PatientController::class)->only(['index', 'show']);
         
@@ -90,13 +90,6 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         Route::resource('hospitalisations', HospitalisationController::class);
     });
 
-    Route::prefix('patient')->middleware('role:Patient')->name('patient.')->group(function () {
-        Route::get('dashboard', [DashboardController::class, 'patient'])->name('dashboard');
-        
-        // Routes pour la gestion des rendez-vous par le patient
-        Route::resource('rendez-vous', \App\Http\Controllers\Patient\RendezVousController::class)->only(['index', 'create', 'store', 'show']);
-        Route::post('rendez-vous/{id}/annuler', [\App\Http\Controllers\Patient\RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
-    });
 
     Route::prefix('infirmier')->middleware('role:Infirmier|Infirmier(e)')->name('infirmier.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'infirmier'])->name('dashboard');

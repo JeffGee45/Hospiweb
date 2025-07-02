@@ -23,7 +23,7 @@ class ConsultationController extends Controller
      */
     public function create(Patient $patient)
     {
-        $medecins = User::where('role', 'Medecin')->get();
+        $medecins = User::where('role', 'Médecin')->get();
         return view('consultations.create', compact('patient', 'medecins'));
     }
 

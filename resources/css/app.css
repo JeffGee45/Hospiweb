@@ -2,10 +2,21 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@source '../../resources/views/**/*.blade.php';
+@source '../../resources/js/**/*.js';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+}
+@font-face {
+  font-family: 'Public Sans';
+  src: url('/fonts/public-sans/PublicSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* Répéter pour chaque graisse/italique utilisée */
+body, .font-sans {
+  font-family: 'Public Sans', sans-serif;
 }

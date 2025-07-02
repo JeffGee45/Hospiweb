@@ -24,10 +24,8 @@ class DashboardController extends Controller
                 return redirect()->route('admin.dashboard');
             case 'Secretaire':
                 return redirect()->route('secretaire.dashboard');
-            case 'Medecin':
+            case 'Médecin':
                 return redirect()->route('medecin.dashboard');
-            case 'Patient':
-                return redirect()->route('patient.dashboard');
             case 'Infirmier':
             case 'Infirmier(e)':
                 return redirect()->route('infirmier.dashboard');
@@ -52,7 +50,7 @@ class DashboardController extends Controller
             'totalPatients' => Patient::count(),
             'totalAppointments' => RendezVous::count(),
             'totalUsers' => User::count(),
-            'totalMedecins' => User::where('role', 'Medecin')->count(),
+            'totalMedecins' => User::whereIn('role', ['Médecin', 'Medecin'])->count(),
             'todayAppointments' => RendezVous::whereDate('date_rendez_vous', $today)->count(),
             'recentAppointments' => RendezVous::with(['patient', 'medecin'])
                 ->latest()

@@ -10,7 +10,7 @@ class MedecinController extends Controller
 {
     public function index()
     {
-        $medecins = User::where('role', 'Medecin')->latest()->paginate(10);
+        $medecins = User::where('role', 'Médecin')->latest()->paginate(10);
         return view('medecins.index', compact('medecins'));
     }
 
@@ -33,7 +33,7 @@ class MedecinController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'Medecin',
+            'role' => 'Médecin',
             'telephone' => $request->telephone,
             'specialite' => $request->specialite,
         ]);

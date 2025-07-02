@@ -10,11 +10,11 @@
     <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}" />
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+
+    <!-- La police Figtree sera remplacée par Public Sans, chargée localement -->
 
     <!-- Styles -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS est maintenant importé via app.css -->
     <style>
         body {
             font-family: 'Figtree', sans-serif;

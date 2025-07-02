@@ -10,7 +10,7 @@
     </div>
 
     <!-- Cartes de statistiques -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
         <!-- Carte Utilisateurs -->
         <div class="bg-white rounded-lg shadow-md p-6 flex items-center">
             <div class="p-3 rounded-full bg-blue-100 text-blue-600 mr-4">
@@ -21,19 +21,7 @@
             <div>
                 <p class="text-sm font-medium text-gray-500">Utilisateurs</p>
                 <p class="text-2xl font-semibold text-gray-800">{{ $stats['totalUsers'] }}</p>
-            </div>
-        </div>
-
-        <!-- Carte Médecins -->
-        <div class="bg-white rounded-lg shadow-md p-6 flex items-center">
-            <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                </svg>
-            </div>
-            <div>
-                <p class="text-sm font-medium text-gray-500">Médecins</p>
-                <p class="text-2xl font-semibold text-gray-800">{{ $stats['totalMedecins'] ?? 0 }}</p>
+                <a href="{{ route('admin.users.index') }}" class="text-xs text-blue-600 hover:underline mt-1 inline-block">Voir tous les utilisateurs</a>
             </div>
         </div>
 
@@ -84,7 +72,7 @@
                         <p class="text-sm text-gray-500">Créer un compte pour un nouveau membre du personnel</p>
                     </div>
                 </a>
-                <a href="{{ route('admin.users.index') }}?role=medecin" class="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
+                {{-- <a href="{{ route('admin.users.index') }}?role=Médecin" class="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition">
                     <div class="p-2 bg-green-100 rounded-lg mr-3">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
@@ -92,9 +80,9 @@
                     </div>
                     <div>
                         <p class="font-medium text-gray-800">Gérer les médecins</p>
-                        <p class="text-sm text-gray-500">Voir et gérer les comptes des médecins</p>
+                        <p class="text-sm text-gray-500">Voir et gérer les comptes des médecins ({{ $stats['totalMedecins'] ?? 0 }})</p>
                     </div>
-                </a>
+                </a> --}}
             </div>
         </div>
 

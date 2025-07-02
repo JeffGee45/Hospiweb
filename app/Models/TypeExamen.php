@@ -41,6 +41,11 @@ class TypeExamen extends Model
         return $this->hasMany(ExamenMedical::class, 'type_examen_id');
     }
 
+    public function parametres()
+    {
+        return $this->hasMany(ParametreExamen::class, 'type_examen_id');
+    }
+
     // Scopes
     public function scopeActifs($query)
     {

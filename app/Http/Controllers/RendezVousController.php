@@ -42,7 +42,7 @@ class RendezVousController extends Controller
         $user = Auth::user();
         
         // Si l'utilisateur est un médecin, ne montrer que ses propres rendez-vous
-        if ($user->role === 'Medecin') {
+        if ($user->role === 'Médecin') {
             $users = User::where('id', $user->id)->get();
         } else {
             $users = User::orderBy('name')->get();

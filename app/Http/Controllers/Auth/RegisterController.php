@@ -39,7 +39,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'Patient', // Rôle par défaut pour les nouveaux utilisateurs
+            'role' => 'Secretaire', // Rôle par défaut pour les nouveaux utilisateurs
         ]);
 
         Auth::login($user);

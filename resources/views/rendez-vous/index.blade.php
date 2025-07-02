@@ -82,12 +82,12 @@
                                         </form>
                                     @endif
                                     
-                                    @if ($rdv->statut !== 'Annulé' && in_array(auth()->user()->role, ['Admin', 'Secretaire', 'Medecin']))
+                                    @if ($rdv->statut !== 'Annulé' && in_array(auth()->user()->role, ['Admin', 'Secretaire', 'Médecin']))
                                         @php
                                             $routeName = 'secretaire.rendez-vous.annuler';
                                             if (auth()->user()->role === 'Admin') {
                                                 $routeName = 'admin.rendez-vous.annuler';
-                                            } elseif (auth()->user()->role === 'Medecin') {
+                                            } elseif (auth()->user()->role === 'Médecin') {
                                                 $routeName = 'medecin.rendez-vous.annuler';
                                             }
                                         @endphp

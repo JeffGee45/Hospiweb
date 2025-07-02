@@ -20,7 +20,7 @@ class RapportController extends Controller
     public function index()
     {
         $stats = [
-            'consultations_par_medecin' => User::where('role', 'Medecin')->withCount('consultations')->get(),
+            'consultations_par_medecin' => User::where('role', 'Médecin')->withCount('consultations')->get(),
             'hospitalisations_en_cours' => Hospitalisation::whereNull('date_sortie_reelle')->count(),
             'medicaments_plus_prescrits' => DB::table('ordonnance_medicament')
                 ->join('medicaments', 'ordonnance_medicament.medicament_id', '=', 'medicaments.id')
@@ -40,7 +40,7 @@ class RapportController extends Controller
      */
     public function exportConsultationsParMedecin()
     {
-        $data = User::where('role', 'Medecin')->withCount('consultations')->get();
+        $data = User::where('role', 'Médecin')->withCount('consultations')->get();
         $pdf = Pdf::loadView('rapports.pdf.consultations-par-medecin', ['data' => $data]);
         return $pdf->download('rapport-consultations-par-medecin-' . date('Y-m-d') . '.pdf');
     }
