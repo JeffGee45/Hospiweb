@@ -14,10 +14,32 @@ class UserController extends Controller
     /**
      * Affiche la liste des utilisateurs.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->paginate(10);
-        return view('admin.users.index', compact('users'));
+        $query = User::query();
+
+        // Recherche par nom ou email
+        if ($search = $request->input('search')) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'LIKE', "%{$search}%")
+                  ->orWhere('email', 'LIKE', "%{$search}%");
+            });
+        }
+
+        // Filtre par rôle
+        if ($role = $request->input('role')) {
+            $query->where('role', $role);
+        }
+
+        // Filtre par statut (actif/inactif)
+        if ($status = $request->input('status')) {
+            $query->where('is_active', $status === 'active');
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
+        $roles = ['Admin', 'Médecin', 'Infirmier', 'Secrétaire', 'Pharmacien', 'Caissier'];
+        
+        return view('admin.users.index', compact('users', 'roles'));
     }
 
     /**

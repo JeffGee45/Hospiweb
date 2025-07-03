@@ -7,121 +7,224 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class PatientController extends Controller
 {
+    /**
+     * Nombre d'éléments par page pour la pagination
+     */
+    protected $perPage = 15;
+
     public function __construct()
     {
         $this->middleware('auth');
+        $this->middleware('role:Admin|Secretaire|Medecin')->only(['index', 'show']);
+        $this->middleware('role:Admin|Secretaire')->only(['create', 'store', 'edit', 'update']);
+        $this->middleware('role:Admin')->only(['destroy']);
     }
 
-
     /**
-     * Display a listing of the resource.
+     * Affiche la liste des patients
      */
     public function index()
     {
-        $query = Patient::query();
-        if ($search = request('q')) {
-            $query->where(function($q) use ($search) {
+        $search = request('q');
+        
+        $patients = Patient::when($search, function($query) use ($search) {
+            return $query->where(function($q) use ($search) {
                 $q->where('nom', 'like', "%{$search}%")
-                  ->orWhere('prenom', 'like', "%{$search}%");
+                  ->orWhere('prenom', 'like', "%{$search}%")
+                  ->orWhere('numero_dossier', 'like', "%{$search}%");
             });
-        }
-        $patients = $query->with('latestConsultation')->latest()->paginate(10)->appends(['q' => $search]);
+        })
+        ->with('latestConsultation')
+        ->latest()
+        ->paginate($this->perPage)
+        ->appends(['q' => $search]);
+
         return view('patients.index', compact('patients'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Affiche le formulaire de création d'un patient
      */
     public function create()
     {
-        return view('patients.create');
+        $groupesSanguins = [
+            'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
+        ];
+
+        return view('patients.create', compact('groupesSanguins'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Enregistre un nouveau patient
      */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'nom' => 'required|string|max:255',
-            'prenom' => 'required|string|max:255',
-            'date_naissance' => 'required|date',
-            'sexe' => 'required|string|in:Homme,Femme,Autre',
-            'adresse' => 'required|string|max:255',
-            'telephone' => 'required|string|max:20',
-            'email' => 'nullable|email|unique:patients,email',
-            'groupe_sanguin' => 'nullable|string|max:5',
-            'antecedents_medicaux' => 'nullable|string',
-            'allergies' => 'nullable|string',
-            'nom_contact_urgence' => 'nullable|string|max:255',
-            'telephone_contact_urgence' => 'nullable|string|max:20',
-        ]);
-
-        $validatedData['statut'] = 'Actif';
-
-        Patient::create($validatedData);
-
-        $rolePrefix = strtolower(Auth::user()->role);
-        return redirect()->route("{$rolePrefix}.patients.index")
-                         ->with('success', 'Patient créé avec succès.');
+        $validatedData = $this->validatePatient($request);
+        
+        try {
+            DB::beginTransaction();
+            
+            $patient = Patient::create($validatedData);
+            
+            // Log de l'action
+            Log::info('Nouveau patient créé', [
+                'patient_id' => $patient->id,
+                'par_utilisateur' => Auth::id(),
+                'donnees' => $validatedData
+            ]);
+            
+            DB::commit();
+            
+            return redirect()
+                ->route('admin.patients.show', $patient->id)
+                ->with('success', 'Patient créé avec succès.');
+                
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur lors de la création du patient', [
+                'erreur' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return back()
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la création du patient.');
+        }
     }
 
     /**
-     * Display the specified resource.
+     * Valide les données du formulaire patient
+     *
+     * @param Request $request
+     * @param int|null $patientId ID du patient pour la validation unique de l'email
+     * @return array
+     */
+    protected function validatePatient(Request $request, $patientId = null)
+    {
+        $rules = [
+            'nom' => 'required|string|max:255',
+            'prenom' => 'required|string|max:255',
+            'date_naissance' => 'required|date|before:today',
+            'lieu_naissance' => 'nullable|string|max:255',
+            'sexe' => 'required|in:Homme,Femme,Autre',
+            'adresse' => 'required|string|max:500',
+            'telephone' => 'required|string|max:20',
+            'email' => 'nullable|email|max:255|unique:patients,email',
+            'groupe_sanguin' => 'nullable|in:A+,A-,B+,B-,AB+,AB-,O+,O-',
+            'profession' => 'nullable|string|max:255',
+            'antecedents_medicaux' => 'nullable|string',
+            'traitements_en_cours' => 'nullable|string',
+            'allergies' => 'nullable|string',
+            'nom_contact_urgence' => 'nullable|string|max:255',
+            'telephone_contact_urgence' => 'nullable|string|max:20',
+            'lien_contact_urgence' => 'nullable|string|max:255',
+            'notes' => 'nullable|string',
+            'statut' => 'sometimes|in:Actif,Inactif,Décédé',
+        ];
+
+        if ($patientId) {
+            $rules['email'] .= ",{$patientId},id";
+        }
+
+        $validatedData = $request->validate($rules);
+        
+        // Valeurs par défaut
+        if (!isset($validatedData['statut'])) {
+            $validatedData['statut'] = 'Actif';
+        }
+        
+        // Nettoyage des données
+        $validatedData['email'] = !empty($validatedData['email']) ? strtolower(trim($validatedData['email'])) : null;
+        $validatedData['telephone'] = preg_replace('/[^0-9+]/', '', $validatedData['telephone']);
+        
+        if (isset($validatedData['telephone_contact_urgence'])) {
+            $validatedData['telephone_contact_urgence'] = preg_replace('/[^0-9+]/', '', $validatedData['telephone_contact_urgence']);
+        }
+        
+        return $validatedData;
+    }
+    
+    /**
+     * Affiche les détails d'un patient
      */
     public function show(Patient $patient)
     {
+        $patient->load([
+            'consultations' => function($query) {
+                $query->latest()->take(5);
+            },
+            'rendezVous' => function($query) {
+                $query->where('date_rendez_vous', '>=', now())
+                      ->orderBy('date_rendez_vous')
+                      ->take(5);
+            },
+            'hospitalisations' => function($query) {
+                $query->where('statut', 'en_cours')
+                      ->latest()
+                      ->take(3);
+            },
+            'ordonnances' => function($query) {
+                $query->latest()->take(5);
+            }
+        ]);
+
         return view('patients.show', compact('patient'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Affiche le formulaire de modification d'un patient
      */
     public function edit(Patient $patient)
     {
-        return view('patients.edit', compact('patient'));
+        $groupesSanguins = [
+            'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
+        ];
+
+        $statuts = [
+            'Actif' => 'Actif',
+            'Inactif' => 'Inactif',
+            'Décédé' => 'Décédé'
+        ];
+
+        return view('patients.edit', compact('patient', 'groupesSanguins', 'statuts'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Met à jour les informations d'un patient
      */
     public function update(Request $request, Patient $patient)
     {
+        $validatedData = $this->validatePatient($request, $patient->id);
+        
         try {
-            $validatedData = $request->validate([
-                'nom' => 'required|string|max:255',
-                'prenom' => 'required|string|max:255',
-                'date_naissance' => 'required|date',
-                'sexe' => 'required|string|in:Homme,Femme,Autre',
-                'adresse' => 'required|string|max:255',
-                'telephone' => 'required|string|max:20',
-                'email' => 'nullable|email|unique:patients,email,' . $patient->id,
-                'groupe_sanguin' => 'nullable|string|max:5',
-                'antecedents_medicaux' => 'nullable|string',
-                'allergies' => 'nullable|string',
-                'nom_contact_urgence' => 'nullable|string|max:255',
-                'telephone_contact_urgence' => 'nullable|string|max:20',
-                'statut' => 'sometimes|string|in:Actif,Inactif,Décédé',
-            ]);
-
+            DB::beginTransaction();
+            
             // Journalisation avant la mise à jour
+            $anciennesDonnees = $patient->toArray();
+            
+            $patient->update($validatedData);
+            
+            // Journalisation après la mise à jour
             Log::info('Mise à jour du patient', [
                 'patient_id' => $patient->id,
-                'anciennes_donnees' => $patient->toArray(),
-                'nouvelles_donnees' => $validatedData,
-                'effectue_par' => Auth::check() ? Auth::user()->name : 'Système',
+                'anciennes_donnees' => $anciennesDonnees,
+                'nouvelles_donnees' => $patient->fresh()->toArray(),
+                'par_utilisateur' => Auth::id()
             ]);
-
-            $patient->update($validatedData);
-
-            $rolePrefix = strtolower(Auth::user()->role);
-            return redirect()->route("{$rolePrefix}.patients.index")
-                             ->with('success', 'Patient mis à jour avec succès.');
             
+            DB::commit();
+            
+            return redirect()
+                ->route('admin.patients.show', $patient->id)
+                ->with('success', 'Patient mis à jour avec succès.');
+                
         } catch (\Exception $e) {
+            DB::rollBack();
+            
             Log::error('Erreur lors de la mise à jour du patient', [
                 'patient_id' => $patient->id,
                 'erreur' => $e->getMessage(),
@@ -129,38 +232,79 @@ class PatientController extends Controller
             ]);
 
             return back()
-                    ->withInput()
-                    ->with('error', 'Une erreur est survenue lors de la mise à jour du patient. Veuillez réessayer.');
+                ->withInput()
+                ->with('error', 'Une erreur est survenue lors de la mise à jour du patient.');
         }
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Supprime un patient de manière sécurisée
      */
     public function destroy(Patient $patient)
     {
         try {
+            DB::beginTransaction();
+            
+            // Vérifier si le patient a des données liées
+            $hasRelatedData = $patient->consultations()->exists() || 
+                            $patient->rendezVous()->exists() ||
+                            $patient->hospitalisations()->exists() ||
+                            $patient->ordonnances()->exists() ||
+                            $patient->paiements()->exists();
+            
+            if ($hasRelatedData) {
+                // Journalisation de la tentative de suppression avec données liées
+                Log::warning('Tentative de suppression d\'un patient avec des données liées', [
+                    'patient_id' => $patient->id,
+                    'nom_complet' => $patient->nom_complet,
+                    'par_utilisateur' => Auth::id(),
+                    'donnees_liees' => [
+                        'consultations' => $patient->consultations()->count(),
+                        'rendez_vous' => $patient->rendezVous()->count(),
+                        'hospitalisations' => $patient->hospitalisations()->count(),
+                        'ordonnances' => $patient->ordonnances()->count(),
+                        'paiements' => $patient->paiements()->count(),
+                    ]
+                ]);
+                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Impossible de supprimer ce patient car il possède des données associées (consultations, rendez-vous, etc.).',
+                    'has_related_data' => true
+                ], 422);
+            }
+            
             // Journalisation avant suppression
             Log::info('Suppression du patient', [
                 'patient_id' => $patient->id,
-                'nom_complet' => $patient->prenom . ' ' . $patient->nom,
-                'effectue_par' => Auth::check() ? Auth::user()->name : 'Système',
+                'nom_complet' => $patient->nom_complet,
+                'par_utilisateur' => Auth::id(),
+                'donnees' => $patient->toArray()
             ]);
 
-            // Suppression du patient (les relations sont gérées par le modèle avec onDelete('cascade'))
-            $patient->delete();
+            // Suppression du patient
+            $patient->forceDelete();
+            
+            DB::commit();
 
-            return redirect()->route('admin.patients.index')
-                             ->with('success', 'Le patient a été supprimé avec succès.');
-                             
+            return response()->json([
+                'success' => true,
+                'message' => 'Patient supprimé avec succès.'
+            ]);
+
         } catch (\Exception $e) {
+            DB::rollBack();
+            
             Log::error('Erreur lors de la suppression du patient', [
                 'patient_id' => $patient->id,
                 'erreur' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return back()->with('error', 'Une erreur est survenue lors de la suppression du patient. Veuillez réessayer.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Une erreur est survenue lors de la suppression du patient.'
+            ], 500);
         }
     }
 

@@ -9,19 +9,22 @@ use App\Models\Ordonnance;
 use App\Models\Hospitalisation;
 use App\Models\RendezVous;
 use App\Models\Paiement;
+use App\Models\User;
 
 class Patient extends Model
 {
-
     use SoftDeletes;
 
     protected $fillable = [
         'user_id',
         'numero_dossier',
+        'nom',
+        'prenom',
         'date_naissance',
         'lieu_naissance',
         'adresse',
         'telephone',
+        'email',
         'sexe',
         'groupe_sanguin',
         'allergies',
@@ -49,7 +52,62 @@ class Patient extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
-    
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['nom_complet', 'age', 'status_classes'];
+
+    /**
+     * Relation avec les consultations du patient
+     */
+    public function consultations()
+    {
+        return $this->hasMany(Consultation::class);
+    }
+
+    /**
+     * Relation avec la dernière consultation
+     */
+    public function latestConsultation()
+    {
+        return $this->hasOne(Consultation::class)->latestOfMany();
+    }
+
+    /**
+     * Relation avec les rendez-vous du patient
+     */
+    public function rendezVous()
+    {
+        return $this->hasMany(RendezVous::class);
+    }
+
+    /**
+     * Relation avec les hospitalisations du patient
+     */
+    public function hospitalisations()
+    {
+        return $this->hasMany(Hospitalisation::class);
+    }
+
+    /**
+     * Relation avec les ordonnances du patient
+     */
+    public function ordonnances()
+    {
+        return $this->hasMany(Ordonnance::class);
+    }
+
+    /**
+     * Relation avec les paiements du patient
+     */
+    public function paiements()
+    {
+        return $this->hasMany(Paiement::class);
+    }
+
     /**
      * Get the user that owns the patient.
      */
@@ -58,51 +116,57 @@ class Patient extends Model
         return $this->belongsTo(User::class);
     }
 
-
-
-    // Relations
-    public function consultations()
-    {
-        return $this->hasMany(Consultation::class);
-    }
-
-    public function ordonnances()
-    {
-        return $this->hasMany(Ordonnance::class);
-    }
-
-    public function hospitalisations()
-    {
-        return $this->hasMany(Hospitalisation::class);
-    }
-
-    public function rendezVous()
-    {
-        return $this->hasMany(RendezVous::class);
-    }
-
-    public function paiements()
-    {
-        return $this->hasMany(Paiement::class);
-    }
-
-    // Scopes
-    public function scopeActifs($query)
-    {
-        return $query->where('statut', 'actif');
-    }
-
-    // Méthodes utilitaires
-    public function getAgeAttribute()
-    {
-        return $this->date_naissance->age;
-    }
-
+    /**
+     * Accessor pour le nom complet
+     */
     public function getNomCompletAttribute()
     {
-        return "{$this->prenom} {$this->nom}";
+        return trim("{$this->prenom} {$this->nom}");
     }
 
+    /**
+     * Accessor pour l'âge du patient
+     */
+    public function getAgeAttribute()
+    {
+        return $this->date_naissance ? $this->date_naissance->age : null;
+    }
+    
+    /**
+     * Accesseur pour les classes CSS du statut
+     */
+    public function getStatusClassesAttribute()
+    {
+        $classes = [
+            'Actif' => 'bg-green-500 text-white',
+            'Inactif' => 'bg-yellow-500 text-white',
+            'Décédé' => 'bg-red-500 text-white',
+        ];
+        
+        return $classes[$this->statut] ?? 'bg-gray-500 text-white';
+    }
+
+    /**
+     * Scope pour les patients actifs
+     */
+    public function scopeActif($query)
+    {
+        return $query->where('statut', 'Actif');
+    }
+
+    /**
+     * Scope pour la recherche
+     */
+    public function scopeSearch($query, $search)
+    {
+        return $query->where('nom', 'like', "%{$search}%")
+                    ->orWhere('prenom', 'like', "%{$search}%")
+                    ->orWhere('numero_dossier', 'like', "%{$search}%");
+    }
+
+    /**
+     * Boot the model.
+     */
     protected static function boot()
     {
         parent::boot();
@@ -116,7 +180,7 @@ class Patient extends Model
     }
 
     /**
-     * Récupère la dernière consultation du patient.
+     * Récupère la dernière consultation du patient
      */
     public function derniereConsultation()
     {

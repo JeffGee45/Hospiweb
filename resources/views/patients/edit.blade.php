@@ -37,7 +37,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label for="date_naissance" class="block font-semibold text-gray-700 mb-1">Date de naissance</label>
-                        <input type="date" name="date_naissance" id="date_naissance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition" value="{{ old('date_naissance', $patient->date_naissance) }}" required>
+                        <input type="date" name="date_naissance" id="date_naissance" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition" value="{{ old('date_naissance', $patient->date_naissance ? \Carbon\Carbon::parse($patient->date_naissance)->format('Y-m-d') : '') }}" required>
                     </div>
                     <div>
                         <label for="sexe" class="block font-semibold text-gray-700 mb-1">Sexe</label>
@@ -89,6 +89,16 @@
                 <div>
                     <label for="allergies" class="block font-semibold text-gray-700 mb-1">Allergies</label>
                     <textarea name="allergies" id="allergies" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition">{{ old('allergies', $patient->allergies) }}</textarea>
+                </div>
+
+                <div>
+                    <label for="statut" class="block font-semibold text-gray-700 mb-1">Statut</label>
+                    <select name="statut" id="statut" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition" required>
+                        <option value="" disabled>Sélectionner un statut</option>
+                        <option value="Actif" {{ old('statut', $patient->statut) == 'Actif' ? 'selected' : '' }}>Actif</option>
+                        <option value="Inactif" {{ old('statut', $patient->statut) == 'Inactif' ? 'selected' : '' }}>Inactif</option>
+                        <option value="Décédé" {{ old('statut', $patient->statut) == 'Décédé' ? 'selected' : '' }}>Décédé</option>
+                    </select>
                 </div>
 
                 <h2 class="text-xl font-bold text-blue-700 mt-6 pt-4 border-t">Contact d'urgence</h2>
