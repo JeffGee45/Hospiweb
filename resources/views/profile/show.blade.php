@@ -7,17 +7,25 @@
             <div class="p-6 bg-white border-b border-gray-200">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-semibold text-gray-800">Mon Profil</h2>
-                    <a href="{{ route('profile.edit') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                        Modifier le profil
-                    </a>
+                    {{-- <div class="flex space-x-4">
+                        <a href="{{ route('profile.edit') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Modifier le profil
+                        </a>
+                    </div> --}}
                 </div>
+                
+                @if (session('message'))
+                    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
+                        {{ session('message') }}
+                    </div>
+                @endif
                 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <!-- Photo de profil -->
                     <div class="lg:col-span-1">
                         <div class="bg-white p-6 rounded-lg shadow">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Photo de profil</h3>
-                            <livewire:profile-photo-upload />
+                            <livewire:profile-photo-upload :user="$user" :editable="false" />
                         </div>
                     </div>
                     

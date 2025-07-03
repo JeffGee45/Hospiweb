@@ -77,14 +77,7 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         Route::get('dashboard', [DashboardController::class, 'medecin'])->name('dashboard');
         Route::resource('patients', PatientController::class)->only(['index', 'show']);
         
-        // Version simplifiée des rendez-vous
-        Route::prefix('simple')->name('simple.')->group(function () {
-            Route::get('rendez-vous', [\App\Http\Controllers\Medecin\SimpleRendezVousController::class, 'index'])->name('rendez-vous.index');
-            Route::get('rendez-vous/{id}', [\App\Http\Controllers\Medecin\SimpleRendezVousController::class, 'show'])->name('rendez-vous.show');
-            Route::post('rendez-vous/{id}/annuler', [\App\Http\Controllers\Medecin\SimpleRendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
-        });
-        
-        // Anciennes routes (conservées pour compatibilité)
+        // Gestion des rendez-vous
         Route::resource('rendez-vous', \App\Http\Controllers\Medecin\RendezVousController::class)->only(['index', 'show']);
         Route::post('rendez-vous/{rendez_vous}/annuler', [\App\Http\Controllers\Medecin\RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
         

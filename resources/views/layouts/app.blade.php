@@ -60,7 +60,7 @@
                             </a>
                             <a href="{{ route('medecin.rendez-vous.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('medecin.rendez-vous.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
                                 <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                <span>Mon Agenda</span>
+                                <span>Rendez-vous</span>
                             </a>
                         @endif
 
@@ -115,11 +115,17 @@
                         <!-- Bouton du menu -->
                         <button @click="open = !open" class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">
                             <div class="flex items-center gap-3">
-                                <div class="bg-blue-100 text-blue-700 rounded-full p-2">
-                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                                    </svg>
-                                </div>
+                                @if(Auth::user()->photo)
+                                    <img class="h-10 w-10 rounded-full object-cover border-2 border-white shadow" 
+                                         src="{{ asset('storage/' . Auth::user()->photo) }}?{{ time() }}" 
+                                         alt="Photo de profil de {{ Auth::user()->name }}">
+                                @else
+                                    <div class="bg-blue-100 text-blue-700 rounded-full p-2">
+                                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                        </svg>
+                                    </div>
+                                @endif
                                 <div class="text-left">
                                     <p class="font-semibold text-sm text-gray-800">{{ Auth::user()->name }}</p>
                                     <p class="text-xs text-gray-500">{{ Auth::user()->role }}</p>
