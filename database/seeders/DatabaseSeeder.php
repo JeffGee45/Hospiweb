@@ -15,16 +15,11 @@ class DatabaseSeeder extends Seeder
     {
         // Les seeders sont exécutés dans l'ordre de dépendance
         $this->call([
-            UserSeeder::class,
+            UserSeeder::class,    // D'abord créer les utilisateurs
+            PatientSeeder::class, // Ensuite créer les patients (qui dépendent des utilisateurs)
             TypeExamenSeeder::class,
             ParametreExamenSeeder::class,
             // Ajoutez d'autres seeders ici si nécessaire
-        ]);
-
-        // Si vous avez besoin de créer un utilisateur de test supplémentaire
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
         ]);
     }
 }

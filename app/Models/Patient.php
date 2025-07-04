@@ -16,7 +16,7 @@ class Patient extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'user_id',
+
         'numero_dossier',
         'nom',
         'prenom',
@@ -111,10 +111,7 @@ class Patient extends Model
     /**
      * Get the user that owns the patient.
      */
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+
 
     /**
      * Accessor pour le nom complet
@@ -137,13 +134,11 @@ class Patient extends Model
      */
     public function getStatusClassesAttribute()
     {
-        $classes = [
-            'Actif' => 'bg-green-500 text-white',
-            'Inactif' => 'bg-yellow-500 text-white',
-            'Décédé' => 'bg-red-500 text-white',
-        ];
-        
-        return $classes[$this->statut] ?? 'bg-gray-500 text-white';
+        return [
+            'actif' => 'bg-green-100 text-green-800',
+            'inactif' => 'bg-yellow-100 text-yellow-800',
+            'décédé' => 'bg-red-100 text-red-800',
+        ][$this->statut] ?? 'bg-gray-100 text-gray-800';
     }
 
     /**

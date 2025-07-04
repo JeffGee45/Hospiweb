@@ -14,7 +14,7 @@ class PatientController extends Controller
     /**
      * Nombre d'éléments par page pour la pagination
      */
-    protected $perPage = 15;
+    protected $perPage = 10;
 
     public function __construct()
     {
