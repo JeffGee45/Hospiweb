@@ -15,7 +15,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Factures en attente</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $pendingInvoicesCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['pendingInvoicesCount'] }}</p>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Revenus du Jour</p>
-                <p class="text-2xl font-bold text-gray-800">{{ number_format($todayRevenue, 2, ',', ' ') }} €</p>
+                <p class="text-2xl font-bold text-gray-800">{{ number_format($stats['todayRevenue'], 2, ',', ' ') }} €</p>
             </div>
         </div>
     </div>
@@ -47,7 +47,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        @forelse ($latestInvoices as $invoice)
+                        @forelse ($stats['latestInvoices'] as $invoice)
                             <tr>
                                 <td class="py-4 px-4 whitespace-nowrap font-medium text-gray-900">{{ $invoice->patient->name ?? 'N/A' }}</td>
                                 <td class="py-4 px-4 whitespace-nowrap text-gray-500">{{ number_format($invoice->montant, 2, ',', ' ') }} €</td>
@@ -70,7 +70,7 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Accès Rapide</h2>
             <div class="space-y-4">
-                <a href="{{ route('facturation.index') }}" class="block w-full text-center bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors duration-300">
+                <a href="{{ route('caissier.facturation.index') }}" class="block w-full text-center bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 transition-colors duration-300">
                     Gérer la Facturation
                 </a>
             </div>

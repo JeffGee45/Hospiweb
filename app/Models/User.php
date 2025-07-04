@@ -45,6 +45,62 @@ class User extends Authenticatable
     ];
 
     /**
+     * Rôles disponibles dans l'application
+     *
+     * @var array
+     */
+    public static $roles = [
+        'Admin' => 'Administrateur',
+        'Médecin' => 'Médecin',
+        'Infirmier' => 'Infirmier(e)',
+        'Secrétaire' => 'Secrétaire',
+        'Pharmacien' => 'Pharmacien',
+        'Caissier' => 'Caissier'
+    ];
+
+    /**
+     * Vérifie si l'utilisateur a un rôle spécifique
+     *
+     * @param string $role
+     * @return bool
+     */
+    public function hasRole($role)
+    {
+        return $this->role === $role;
+    }
+
+    /**
+     * Vérifie si l'utilisateur a l'un des rôles spécifiés
+     *
+     * @param array $roles
+     * @return bool
+     */
+    public function hasAnyRole(array $roles)
+    {
+        return in_array($this->role, $roles);
+    }
+
+    /**
+     * Vérifie si l'utilisateur est administrateur
+     *
+     * @return bool
+     */
+    public function isAdmin()
+    {
+        return $this->hasRole('Admin');
+    }
+
+    /**
+     * Vérifie si l'utilisateur est un membre du personnel
+     *
+     * @return bool
+     */
+    public function isStaff()
+    {
+        return in_array($this->role, ['Médecin', 'Infirmier', 'Secrétaire', 'Pharmacien', 'Caissier']);
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -94,14 +150,5 @@ class User extends Authenticatable
         return $this->hasOne(Patient::class, 'user_id');
     }
     
-    /**
-     * Check if the user has a specific role
-     *
-     * @param string $role
-     * @return bool
-     */
-    public function hasRole($role)
-    {
-        return $this->role === $role;
-    }
+    // La méthode hasRole est déjà définie plus haut dans le fichier
 }

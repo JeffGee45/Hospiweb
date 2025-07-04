@@ -15,7 +15,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Prescriptions en attente</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $pendingPrescriptionsCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['pendingPrescriptionsCount'] }}</p>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Médicaments en stock faible</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $lowStockMedicationsCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['lowStockMedicationsCount'] }}</p>
             </div>
         </div>
     </div>
@@ -47,7 +47,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        @forelse ($latestPrescriptions as $prescription)
+                        @forelse ($stats['latestPrescriptions'] as $prescription)
                             <tr>
                                 <td class="py-4 px-4 whitespace-nowrap font-medium text-gray-900">{{ $prescription->patient->name ?? 'N/A' }}</td>
                                 <td class="py-4 px-4 whitespace-nowrap text-gray-500">Dr. {{ $prescription->medecin->name ?? 'N/A' }}</td>
@@ -70,7 +70,7 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h2 class="text-xl font-bold text-gray-800 mb-4">Accès Rapide</h2>
             <div class="space-y-4">
-                <a href="{{ route('pharmacie.index') }}" class="block w-full text-center bg-orange-600 text-white py-3 px-4 rounded-lg hover:bg-orange-700 transition-colors duration-300">
+                <a href="{{ route('pharmacien.pharmacie.index') }}" class="block w-full text-center bg-orange-600 text-white py-3 px-4 rounded-lg hover:bg-orange-700 transition-colors duration-300">
                     Gérer la Pharmacie
                 </a>
             </div>

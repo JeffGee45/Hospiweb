@@ -19,24 +19,25 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
+        // Redirection basée sur le rôle de l'utilisateur
         switch ($user->role) {
             case 'Admin':
                 return redirect()->route('admin.dashboard');
-            case 'Secretaire':
+            case 'Secrétaire':
                 return redirect()->route('secretaire.dashboard');
-            case 'Medecin':
+            case 'Médecin':
                 return redirect()->route('medecin.dashboard');
             case 'Patient':
                 return redirect()->route('patient.dashboard');
             case 'Infirmier':
-            case 'Infirmier(e)':
                 return redirect()->route('infirmier.dashboard');
             case 'Pharmacien':
                 return redirect()->route('pharmacien.dashboard');
             case 'Caissier':
                 return redirect()->route('caissier.dashboard');
             default:
-                return redirect()->route('home'); 
+                // Si le rôle n'est pas reconnu, on redirige vers la page d'accueil
+                return redirect()->route('home')->with('error', 'Rôle non reconnu.');
         }
     }
     

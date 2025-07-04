@@ -15,7 +15,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Rendez-vous Aujourd'hui</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $todayAppointmentsCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['todayAppointmentsCount'] }}</p>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
             </div>
             <div>
                 <p class="text-sm text-gray-500">Nouveaux Patients (Aujourd'hui)</p>
-                <p class="text-2xl font-bold text-gray-800">{{ $newPatientsCount }}</p>
+                <p class="text-2xl font-bold text-gray-800">{{ $stats['newPatientsCount'] }}</p>
             </div>
         </div>
     </div>
@@ -46,7 +46,7 @@
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
-                        @forelse ($upcomingAppointments as $rdv)
+                        @forelse ($stats['upcomingAppointments'] as $rdv)
                             <tr>
                                 <td class="py-4 px-4 whitespace-nowrap">
                                     @if($rdv->patient && $rdv->patient->user)
@@ -83,10 +83,10 @@
                 <a href="{{ route('secretaire.rendez-vous.index') }}" class="block w-full text-center bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-300">
                     Gérer les Rendez-vous
                 </a>
-                <a href="{{ route('secretary.patients.create') }}" class="block w-full text-center bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300">
+                <a href="{{ route('secretaire.patients.create') }}" class="block w-full text-center bg-green-600 text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300">
                     Inscrire un Patient
                 </a>
-                <a href="{{ route('secretary.patients.index') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">
+                <a href="{{ route('secretaire.patients.index') }}" class="block w-full text-center bg-gray-200 text-gray-800 py-3 px-4 rounded-lg hover:bg-gray-300 transition-colors duration-300">
                     Voir tous les Patients
                 </a>
             </div>

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('date_facturation');
             $table->date('date_echeance')->nullable();
             $table->decimal('montant_total', 15, 2);
+            $table->decimal('montant_ttc', 15, 2);
             $table->decimal('montant_paye', 15, 2)->default(0.00);
             $table->decimal('montant_restant', 15, 2);
             $table->string('statut'); // 'Brouillon', 'Envoyée', 'Payée', 'Partiellement payée', 'Annulée'

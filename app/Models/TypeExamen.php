@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\ParametreExamen;
 
 class TypeExamen extends Model
 {
@@ -39,6 +40,11 @@ class TypeExamen extends Model
     public function examens()
     {
         return $this->hasMany(ExamenMedical::class, 'type_examen_id');
+    }
+
+    public function parametres()
+    {
+        return $this->hasMany(ParametreExamen::class, 'type_examen_id');
     }
 
     // Scopes

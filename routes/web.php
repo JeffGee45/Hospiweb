@@ -66,14 +66,14 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         Route::get('rapports/export/statistiques', [RapportController::class, 'exportStatistiques'])->name('rapports.export.statistiques');
     });
 
-    Route::prefix('secretaire')->middleware('role:Secretaire')->name('secretaire.')->group(function () {
+    Route::prefix('secretaire')->middleware('role:Secrétaire')->name('secretaire.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'secretaire'])->name('dashboard');
         Route::resource('patients', PatientController::class)->except(['destroy']);
         Route::resource('rendez-vous', RendezVousController::class)->except(['destroy']);
         Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
     });
 
-    Route::prefix('medecin')->middleware('role:Medecin')->name('medecin.')->group(function () {
+    Route::prefix('medecin')->middleware('role:Médecin')->name('medecin.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'medecin'])->name('dashboard');
         Route::resource('patients', PatientController::class)->only(['index', 'show']);
         
@@ -94,7 +94,7 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         Route::resource('rendez-vous', RendezVousController::class)->only(['index', 'show']);
     });
 
-    Route::prefix('infirmier')->middleware('role:Infirmier|Infirmier(e)')->name('infirmier.')->group(function () {
+    Route::prefix('infirmier')->middleware('role:Infirmier')->name('infirmier.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'infirmier'])->name('dashboard');
         Route::resource('soins', App\Http\Controllers\SoinsController::class);
     });
