@@ -6,6 +6,7 @@ use App\Models\Patient;
 use App\Models\User;
 use App\Models\Consultation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ConsultationController extends Controller
 {
@@ -14,8 +15,14 @@ class ConsultationController extends Controller
      */
     public function index(Patient $patient)
     {
-        $consultations = $patient->consultations()->with('medecin')->latest()->paginate(10);
-        return view('consultations.index', compact('patient', 'consultations'));
+        $this->authorize('viewAny', [Consultation::class, $patient]);
+        
+        $consultations = $patient->consultations()
+            ->with('medecin')
+            ->latest()
+            ->paginate(10);
+            
+        return view('medecin.consultations.index', compact('patient', 'consultations'));
     }
 
     /**
@@ -23,8 +30,12 @@ class ConsultationController extends Controller
      */
     public function create(Patient $patient)
     {
-        $medecins = User::where('role', 'Medecin')->get();
-        return view('consultations.create', compact('patient', 'medecins'));
+        $this->authorize('create', [Consultation::class, $patient]);
+        
+        // Le médecin connecté est automatiquement sélectionné
+        $medecin = Auth::user();
+        
+        return view('medecin.consultations.create', compact('patient', 'medecin'));
     }
 
     /**
@@ -32,21 +43,34 @@ class ConsultationController extends Controller
      */
     public function store(Request $request, Patient $patient)
     {
-        $request->validate([
-            'medecin_id' => 'required|exists:users,id',
+        $this->authorize('create', [Consultation::class, $patient]);
+        
+        $validated = $request->validate([
             'date_consultation' => 'required|date',
-            'diagnostic' => 'nullable|string|max:255',
+            'motif' => 'required|string|max:255',
+            'diagnostic' => 'nullable|string',
+            'traitement' => 'nullable|string',
             'notes' => 'nullable|string',
         ]);
+        
+        // Ajouter l'ID du médecin connecté
+        $validated['medecin_id'] = Auth::id();
 
-        $patient->consultations()->create($request->all());
+        $consultation = $patient->consultations()->create($validated);
 
-        return redirect()->route('patients.consultations.index', $patient)->with('success', 'Consultation ajoutée avec succès.');
+        return redirect()
+            ->route('medecin.patients.consultations.show', [$patient, $consultation])
+            ->with('success', 'Consultation ajoutée avec succès.');
     }
 
-    public function show(Consultation $consultation)
+    /**
+     * Affiche les détails d'une consultation.
+     */
+    public function show(Patient $patient, Consultation $consultation)
     {
-        $consultation->load('patient', 'medecin', 'prescription.medicaments');
-        return view('consultations.show', compact('consultation'));
+        $this->authorize('view', $consultation);
+        
+        $consultation->load('medecin', 'prescription.medicaments');
+        return view('medecin.consultations.show', compact('patient', 'consultation'));
     }
 }

@@ -5,7 +5,7 @@
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Consultations de {{ $patient->nom }} {{ $patient->prenom }}</h1>
             <div>
-                <a href="{{ route('patients.consultations.create', $patient) }}"
+                <a href="{{ route('medecin.patients.consultations.create', $patient) }}"
                     class="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white text-base font-semibold shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition duration-150">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">

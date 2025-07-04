@@ -10,37 +10,48 @@ class Ordonnance extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'patient_id',
+        'consultation_id',
         'medecin_id',
-        'date_prescription',
-        'date_expiration',
-        'statut',
-        'notes',
+        'date_ordonnance',
+        'commentaire',
     ];
 
     protected $dates = [
-        'date_prescription',
-        'date_expiration',
+        'date_ordonnance',
         'created_at',
         'updated_at',
-        'deleted_at'
+        'deleted_at',
     ];
 
-    // Relations
-    public function patient()
+    /**
+     * Relation avec la consultation
+     */
+    public function consultation()
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(Consultation::class);
     }
 
+    /**
+     * Relation avec le médecin
+     */
     public function medecin()
     {
         return $this->belongsTo(User::class, 'medecin_id');
     }
 
+    /**
+     * Relation avec les médicaments de l'ordonnance
+     */
     public function medicaments()
     {
-        return $this->belongsToMany(Medicament::class, 'ordonnance_medicament')
-            ->withPivot('posologie', 'duree', 'quantite', 'instructions')
-            ->withTimestamps();
+        return $this->hasMany(MedicamentOrdonnance::class);
+    }
+
+    /**
+     * Accès au patient via la consultation
+     */
+    public function getPatientAttribute()
+    {
+        return $this->consultation->patient;
     }
 }

@@ -79,8 +79,10 @@ class PatientController extends Controller
             
             DB::commit();
             
+            $routeName = Auth::user()->role === 'Admin' ? 'admin.patients.show' : 'secretaire.patients.show';
+            
             return redirect()
-                ->route('admin.patients.show', $patient->id)
+                ->route($routeName, $patient->id)
                 ->with('success', 'Patient créé avec succès.');
                 
         } catch (\Exception $e) {
@@ -218,8 +220,10 @@ class PatientController extends Controller
             
             DB::commit();
             
+            $routeName = Auth::user()->role === 'Admin' ? 'admin.patients.show' : 'secretaire.patients.show';
+
             return redirect()
-                ->route('admin.patients.show', $patient->id)
+                ->route($routeName, $patient->id)
                 ->with('success', 'Patient mis à jour avec succès.');
                 
         } catch (\Exception $e) {

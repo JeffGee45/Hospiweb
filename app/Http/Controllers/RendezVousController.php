@@ -30,6 +30,14 @@ class RendezVousController extends Controller
         return redirect()->route($prefix . $routeName);
     }
 
+    /**
+     * Affiche le calendrier des rendez-vous.
+     */
+    public function calendrier()
+    {
+        return view('rendez-vous.calendrier');
+    }
+
     public function index()
     {
         $rendezVous = RendezVous::with(['patient', 'user'])->latest()->paginate(15);
@@ -97,6 +105,34 @@ class RendezVousController extends Controller
     /**
      * Annule un rendez-vous (statut = 'Annulé').
      */
+    /**
+     * Récupère les rendez-vous pour FullCalendar.
+     */
+    public function getEvents(Request $request)
+    {
+        $start = $request->input('start');
+        $end = $request->input('end');
+
+        $events = RendezVous::whereBetween('date_rendez_vous', [$start, $end])
+            ->with('patient', 'user')
+            ->get()
+            ->map(function ($rdv) {
+                return [
+                    'id' => $rdv->id,
+                    'title' => 'RDV ' . ($rdv->patient->nom ?? 'N/A') . ' avec Dr. ' . ($rdv->user->name ?? 'N/A'),
+                    'start' => $rdv->date_rendez_vous,
+                    'end' => $rdv->date_rendez_vous, // ou calculer une heure de fin si nécessaire
+                    'allDay' => false,
+                    'extendedProps' => [
+                        'motif' => $rdv->motif,
+                        'statut' => $rdv->statut
+                    ]
+                ];
+            });
+
+        return response()->json($events);
+    }
+
     public function annuler($id)
     {
         $rdv = RendezVous::findOrFail($id);

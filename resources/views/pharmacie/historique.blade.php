@@ -4,7 +4,7 @@
 <div class="container mx-auto px-4 sm:px-8">
     <div class="py-8">
         <div>
-            <h2 class="text-2xl font-semibold leading-tight">Prescriptions à Valider</h2>
+            <h2 class="text-2xl font-semibold leading-tight">Historique des Prescriptions</h2>
         </div>
         <div class="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
             <div class="inline-block min-w-full shadow rounded-lg overflow-hidden">
@@ -14,7 +14,7 @@
                             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Patient</th>
                             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Médecin</th>
                             <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Action</th>
+                            <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Statut</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -23,16 +23,11 @@
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $prescription->patient->name ?? 'N/A' }}</td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $prescription->medecin->name ?? 'N/A' }}</td>
                             <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $prescription->created_at->format('d/m/Y') }}</td>
-                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                <form action="{{ route('pharmacien.pharmacie.valider', $prescription) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="text-green-600 hover:text-green-900">Valider</button>
-                                </form>
-                            </td>
+                            <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ ucfirst($prescription->statut) }}</td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="text-center py-10"><p class="text-gray-500">Aucune prescription en attente.</p></td>
+                            <td colspan="4" class="text-center py-10"><p class="text-gray-500">Aucune prescription dans l'historique.</p></td>
                         </tr>
                         @endforelse
                     </tbody>

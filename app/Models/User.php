@@ -13,6 +13,20 @@ use App\Models\Consultation;
 
 class User extends Authenticatable
 {
+    /**
+     * Vérifie si ce médecin a déjà eu une consultation avec ce patient.
+     * @param int $patientId
+     * @return bool
+     */
+    public function isMyPatient($patientId)
+    {
+        if ($this->role !== 'Médecin') return false;
+        // Vérifie si ce médecin a déjà eu une consultation avec ce patient
+        return \App\Models\Consultation::where('medecin_id', $this->id)
+            ->where('patient_id', $patientId)
+            ->exists();
+    }
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, SoftDeletes;
 

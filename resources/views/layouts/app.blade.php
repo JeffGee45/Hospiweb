@@ -40,66 +40,17 @@
                             <span>Tableau de bord</span>
                         </a>
 
-                        {{-- Liens pour la Secrétaire --}}
-                        @if(Auth::user()->role === 'Secretaire')
-                            <a href="{{ route('secretary.patients.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('secretary.patients.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                <span>Gestion des Patients</span>
-                            </a>
-                            <a href="{{ route('secretaire.rendez-vous.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('secretaire.rendez-vous.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                <span>Gestion des Rendez-vous</span>
-                            </a>
-                        @endif
-
-                        {{-- Liens pour le Médecin --}}
-                        @if(Auth::user()->role === 'Medecin')
-                            <a href="{{ route('medecin.patients.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('medecin.patients.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                <span>Mes Patients</span>
-                            </a>
-                            <a href="{{ route('medecin.rendez-vous.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('medecin.rendez-vous.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                                <span>Rendez-vous</span>
-                            </a>
-                        @endif
-
-                        {{-- Lien pour Infirmier(e) --}}
-                        @if(Auth::user()->role === 'Infirmier(e)')
-                            <a href="{{ route('soins.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('soins.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                                <span>Soins</span>
-                            </a>
-                        @endif
-
-                        {{-- Lien pour Pharmacien --}}
-                        @if(Auth::user()->role === 'Pharmacien')
-                            <a href="{{ route('pharmacien.pharmacie.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('pharmacien.pharmacie.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                                <span>Pharmacie</span>
-                            </a>
-                        @endif
-
-                        {{-- Lien pour Caissier --}}
-                        @if(Auth::user()->role === 'Caissier')
-                            <a href="{{ route('caissier.facturation.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('caissier.facturation.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                                <span>Facturation</span>
-                            </a>
-                        @endif
-
-                        {{-- Section Administration (visible uniquement par l'Admin) --}}
+                        {{-- Section Administration (Admin uniquement) --}}
                         @if(Auth::user()->role === 'Admin')
                             <div class="mt-4 pt-4 border-t border-gray-200">
-                                <span class="px-4 text-xs font-semibold text-gray-500 uppercase">Gestion des patients</span>
-                                <a href="{{ route('admin.patients.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('admin.patients.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                    <span>Gestion des Patients</span>
-                                </a>
                                 <span class="px-4 text-xs font-semibold text-gray-500 uppercase">Administration</span>
                                 <a href="{{ route('admin.users.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('admin.users.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
-                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m-7.5-2.962a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Zm-7.5 2.962c0-1.331.375-2.597 1.032-3.686a9.094 9.094 0 0 1 5.932-3.042m-5.932 6.728a9.092 9.092 0 0 0 3.741.479 3 3 0 0 0-4.682-2.72M12 12.75a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0Z" /></svg>
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                                     <span>Utilisateurs</span>
+                                </a>
+                                <a href="{{ route('admin.patients.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('admin.patients.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <span>Patients</span>
                                 </a>
                                 <a href="{{ route('admin.rapports.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('admin.rapports.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
                                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
@@ -107,10 +58,123 @@
                                 </a>
                             </div>
                         @endif
+
+                        {{-- Liens pour la Secrétaire --}}
+                        @if(Auth::user()->role === 'Secrétaire')
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <span class="px-4 text-xs font-semibold text-gray-500 uppercase">Secrétariat</span>
+                                <a href="{{ route('secretaire.patients.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('secretaire.patients.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <span>Gestion des Patients</span>
+                                </a>
+                                <a href="{{ route('secretaire.rendez-vous.calendrier') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('secretaire.rendez-vous.calendrier') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span>Calendrier des RDV</span>
+                                </a>
+                            </div>
+                        @endif
+
+                        {{-- Liens pour le Médecin --}}
+                        @if(Auth::user()->role === 'Médecin')
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <span class="px-4 text-xs font-semibold text-gray-500 uppercase">Médecine</span>
+                                <a href="{{ route('medecin.patients.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('medecin.patients.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <span>Mes Patients</span>
+                                </a>
+                                <a href="{{ route('medecin.rendez-vous.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('medecin.rendez-vous.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    <span>Mes Rendez-vous</span>
+                                </a>
+                                <a href="{{ route('medecin.consultations.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('medecin.consultations.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span>Consultations</span>
+                                </a>
+                                <a href="{{ route('medecin.ordonnances.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('medecin.ordonnances.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span>Ordonnances</span>
+                                </a>
+                            </div>
+                        @endif
+
+                        {{-- Lien pour Infirmier(e) --}}
+                        @if(Auth::user()->role === 'Infirmier')
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <span class="px-4 text-xs font-semibold text-gray-500 uppercase">Soins infirmiers</span>
+                                <a href="{{ route('infirmier.patients.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('infirmier.patients.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.653-.124-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.653.124-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <span>Mes Patients</span>
+                                </a>
+                                <a href="{{ route('infirmier.soins.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('infirmier.soins.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                    <span>Soins à effectuer</span>
+                                </a>
+                                <a href="{{ route('infirmier.soins.historique') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('infirmier.soins.historique') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                    <span>Historique des soins</span>
+                                </a>
+                                <a href="{{ route('infirmier.observations.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('infirmier.observations.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                    <span>Observations</span>
+                                </a>
+                            </div>
+                        @endif
+
+                        {{-- Lien pour Pharmacien --}}
+                        @if(Auth::user()->role === 'Pharmacien')
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <span class="px-4 text-xs font-semibold text-gray-500 uppercase">Pharmacie</span>
+                                <a href="{{ route('pharmacien.pharmacie.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('pharmacien.pharmacie.index') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                    <span>Prescriptions à valider</span>
+                                </a>
+                                <a href="{{ route('pharmacien.pharmacie.historique') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('pharmacien.pharmacie.historique') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                    <span>Historique des prescriptions</span>
+                                </a>
+                                <a href="{{ route('pharmacien.stock.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('pharmacien.stock.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                    <span>Gestion des stocks</span>
+                                </a>
+                                <a href="{{ route('pharmacien.medicaments.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('pharmacien.medicaments.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                                    <span>Référentiel médicaments</span>
+                                </a>
+                            </div>
+                        @endif
+
+                        {{-- Lien pour Caissier --}}
+                        @if(Auth::user()->role === 'Caissier')
+                            <div class="mt-4 pt-4 border-t border-gray-200">
+                                <span class="px-4 text-xs font-semibold text-gray-500 uppercase">Comptabilité</span>
+                                <a href="{{ route('caissier.facturation.nouvelle') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('caissier.facturation.nouvelle') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"></path></svg>
+                                    <span>Nouvelle facture</span>
+                                </a>
+                                <a href="{{ route('caissier.facturation.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('caissier.facturation.index') && !request()->routeIs('caissier.facturation.nouvelle') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span>Factures en attente</span>
+                                </a>
+                                <a href="{{ route('caissier.paiements.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('caissier.paiements.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                    <span>Paiements</span>
+                                </a>
+                                <a href="{{ route('caissier.rapports.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('caissier.rapports.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    <span>Rapports financiers</span>
+                                </a>
+                                <a href="{{ route('caissier.remboursements.index') }}" class="flex items-center gap-3 px-4 py-2 mt-2 text-gray-700 rounded-lg transition-colors duration-200 {{ request()->routeIs('caissier.remboursements.*') ? 'bg-blue-100 text-blue-700' : 'hover:bg-gray-100' }}">
+                                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path></svg>
+                                    <span>Remboursements</span>
+                                </a>
+                            </div>
+                        @endif
+
                     </nav>
                 </div>
+                
+                <!-- Menu déroulant du profil -->
                 <div class="p-4 border-t">
-                    <!-- Menu déroulant du profil -->
                     <div x-data="{ open: false }" class="relative">
                         <!-- Bouton du menu -->
                         <button @click="open = !open" class="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200">

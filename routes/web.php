@@ -69,13 +69,35 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
     Route::prefix('secretaire')->middleware('role:Secrétaire')->name('secretaire.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'secretaire'])->name('dashboard');
         Route::resource('patients', PatientController::class)->except(['destroy']);
-        Route::resource('rendez-vous', RendezVousController::class)->except(['destroy']);
+        
+        // Gestion des rendez-vous
+        Route::get('rendez-vous', [RendezVousController::class, 'calendrier'])->name('rendez-vous.index');
+        Route::get('rendez-vous/events', [RendezVousController::class, 'getEvents'])->name('rendez-vous.events');
+        Route::resource('rendez-vous', RendezVousController::class)->except(['index', 'destroy', 'show']);
         Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
     });
 
     Route::prefix('medecin')->middleware('role:Médecin')->name('medecin.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'medecin'])->name('dashboard');
         Route::resource('patients', PatientController::class)->only(['index', 'show']);
+        
+        // Gestion des consultations
+        Route::resource('patients.consultations', \App\Http\Controllers\ConsultationController::class, [
+            'names' => [
+                'index' => 'patients.consultations.index',
+                'create' => 'patients.consultations.create',
+                'store' => 'patients.consultations.store',
+                'show' => 'patients.consultations.show',
+                'edit' => 'patients.consultations.edit',
+                'update' => 'patients.consultations.update',
+                'destroy' => 'patients.consultations.destroy'
+            ]
+        ])->parameters([
+            'consultations' => 'consultation'
+        ]);
+        
+        // Suppression de la route redondante
+        // Route::resource('consultations', ConsultationController::class);
         
         // Gestion des rendez-vous
         Route::resource('rendez-vous', \App\Http\Controllers\Medecin\RendezVousController::class)->only(['index', 'show']);
@@ -87,6 +109,20 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         
         Route::resource('consultations', ConsultationController::class);
         Route::resource('hospitalisations', HospitalisationController::class);
+        
+        // Gestion des ordonnances
+        Route::prefix('ordonnances')->name('ordonnances.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'index'])->name('index');
+            Route::get('/create/{consultation?}', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'create'])->name('create');
+            Route::post('/', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'store'])->name('store');
+            Route::get('/{ordonnance}', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'show'])->name('show');
+            Route::get('/{ordonnance}/edit', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'edit'])->name('edit');
+            Route::put('/{ordonnance}', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'update'])->name('update');
+            Route::delete('/{ordonnance}', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'destroy'])->name('destroy');
+            
+            // Génération PDF
+            Route::get('/{ordonnance}/pdf', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'generatePdf'])->name('pdf');
+        });
     });
 
     Route::prefix('patient')->middleware('role:Patient')->name('patient.')->group(function () {
@@ -94,14 +130,61 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         Route::resource('rendez-vous', RendezVousController::class)->only(['index', 'show']);
     });
 
-    Route::prefix('infirmier')->middleware('role:Infirmier')->name('infirmier.')->group(function () {
+    Route::prefix('infirmier')->middleware('role:Infirmier|Médecin')->name('infirmier.')->group(function () {
+        // Tableau de bord
         Route::get('dashboard', [DashboardController::class, 'infirmier'])->name('dashboard');
-        Route::resource('soins', App\Http\Controllers\SoinsController::class);
+        
+        // Gestion des patients
+        Route::get('patients', [App\Http\Controllers\PatientController::class, 'index'])->name('patients.index');
+        Route::get('patients/search', [App\Http\Controllers\PatientController::class, 'search'])->name('patients.search');
+        
+        // Gestion des soins
+        Route::prefix('soins')->name('soins.')->group(function () {
+            // Liste des soins à effectuer (page d'accueil)
+            Route::get('/', [App\Http\Controllers\SoinsController::class, 'index'])->name('index');
+            
+            // Historique des soins
+            Route::get('/historique', [App\Http\Controllers\SoinsController::class, 'historique'])->name('historique');
+            
+            // Création et gestion des soins
+            Route::get('/create/{patient?}', [App\Http\Controllers\SoinsController::class, 'create'])->name('create');
+            Route::post('/', [App\Http\Controllers\SoinsController::class, 'store'])->name('store');
+            Route::get('/{soin}/edit', [App\Http\Controllers\SoinsController::class, 'edit'])->name('edit');
+            Route::put('/{soin}', [App\Http\Controllers\SoinsController::class, 'update'])->name('update');
+            Route::delete('/{soin}', [App\Http\Controllers\SoinsController::class, 'destroy'])->name('destroy');
+            Route::get('/{soin}', [App\Http\Controllers\SoinsController::class, 'show'])->name('show');
+            
+            // Actions sur les soins
+            Route::post('/{soin}/terminer', [App\Http\Controllers\SoinsController::class, 'terminer'])->name('terminer');
+            Route::post('/{soin}/annuler', [App\Http\Controllers\SoinsController::class, 'annuler'])->name('annuler');
+            
+            // Export et partage
+            Route::get('/{soin}/pdf', [App\Http\Controllers\SoinsController::class, 'generatePdf'])->name('pdf');
+            Route::get('/{soin}/email', [App\Http\Controllers\SoinsController::class, 'showEmailForm'])->name('email.form');
+            Route::post('/{soin}/email', [App\Http\Controllers\SoinsController::class, 'sendEmail'])->name('email.send');
+        });
+        
+        // Gestion des observations
+        Route::prefix('observations')->name('observations.')->group(function () {
+            Route::get('/', [App\Http\Controllers\ObservationController::class, 'index'])->name('index');
+            Route::get('/create/{patient?}', [App\Http\Controllers\ObservationController::class, 'create'])->name('create');
+            Route::post('/', [App\Http\Controllers\ObservationController::class, 'store'])->name('store');
+            Route::get('/{observation}/edit', [App\Http\Controllers\ObservationController::class, 'edit'])->name('edit');
+            Route::put('/{observation}', [App\Http\Controllers\ObservationController::class, 'update'])->name('update');
+            Route::delete('/{observation}', [App\Http\Controllers\ObservationController::class, 'destroy'])->name('destroy');
+            Route::get('/{observation}', [App\Http\Controllers\ObservationController::class, 'show'])->name('show');
+        });
     });
 
     Route::prefix('pharmacien')->middleware('role:Pharmacien')->name('pharmacien.')->group(function () {
         Route::get('dashboard', [DashboardController::class, 'pharmacien'])->name('dashboard');
         Route::get('pharmacie', [App\Http\Controllers\PharmacieController::class, 'index'])->name('pharmacie.index');
+        Route::post('pharmacie/{prescription}/valider', [App\Http\Controllers\PharmacieController::class, 'valider'])->name('pharmacie.valider');
+        Route::get('pharmacie/historique', [App\Http\Controllers\PharmacieController::class, 'historique'])->name('pharmacie.historique');
+        // Gestion du stock
+        Route::get('stock', [App\Http\Controllers\Pharmacien\StockController::class, 'index'])->name('stock.index');
+        // Gestion des médicaments
+        Route::resource('medicaments', App\Http\Controllers\Pharmacien\MedicamentController::class)->only(['index']);
     });
 
     Route::prefix('caissier')->middleware('role:Caissier')->name('caissier.')->group(function () {
