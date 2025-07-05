@@ -8,7 +8,12 @@
             <div class="flex items-center justify-between">
                 @php
                     $userRole = auth()->user()->role;
-                    $rolePrefix = in_array($userRole, ['Admin', 'Secretaire', 'Medecin']) ? strtolower($userRole) : null;
+                    $rolePrefix = match($userRole) {
+                        'Admin' => 'admin',
+                        'Secrétaire' => 'secretaire',
+                        'Médecin' => 'medecin',
+                        default => null
+                    };
                 @endphp
                 
                 <a href="{{ $rolePrefix ? route($rolePrefix . '.patients.index') : route('dashboard') }}" 
@@ -19,7 +24,7 @@
                     Retour
                 </a>
                 
-                @if($rolePrefix && in_array($userRole, ['Admin', 'Secretaire']))
+                @if($rolePrefix && in_array($userRole, ['Admin', 'Secrétaire']))
                 <a href="{{ route($rolePrefix . '.patients.edit', $patient->id) }}" 
                    class="inline-flex items-center px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors duration-200">
                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -71,10 +71,15 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
         Route::resource('patients', PatientController::class)->except(['destroy']);
         
         // Gestion des rendez-vous
-        Route::get('rendez-vous', [RendezVousController::class, 'calendrier'])->name('rendez-vous.index');
-        Route::get('rendez-vous/events', [RendezVousController::class, 'getEvents'])->name('rendez-vous.events');
-        Route::resource('rendez-vous', RendezVousController::class)->except(['index', 'destroy', 'show']);
-        Route::post('rendez-vous/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('rendez-vous.annuler');
+        Route::prefix('rendez-vous')->name('rendez-vous.')->group(function () {
+            Route::get('/', [RendezVousController::class, 'calendrier'])->name('index');
+            Route::get('/events', [RendezVousController::class, 'getEvents'])->name('events');
+            Route::post('/{rendez_vous}/annuler', [RendezVousController::class, 'annuler'])->name('annuler');
+            Route::get('/create', [RendezVousController::class, 'create'])->name('create');
+            Route::post('/', [RendezVousController::class, 'store'])->name('store');
+            Route::get('/{rendez_vous}/edit', [RendezVousController::class, 'edit'])->name('edit');
+            Route::put('/{rendez_vous}', [RendezVousController::class, 'update'])->name('update');
+        });
     });
 
     Route::prefix('medecin')->middleware('role:Médecin')->name('medecin.')->group(function () {

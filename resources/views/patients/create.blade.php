@@ -16,7 +16,7 @@
             @endif
 
             @php
-    $storeRoute = auth()->user()->role === 'Admin' ? route('admin.patients.store') : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.store') : null);
+    $storeRoute = auth()->user()->role === 'Admin' ? route('admin.patients.store') : (auth()->user()->role === 'Secrétaire' ? route('secretaire.patients.store') : null);
 @endphp
 
 @if($storeRoute)

@@ -36,8 +36,9 @@ class DashboardController extends Controller
             case 'Caissier':
                 return redirect()->route('caissier.dashboard');
             default:
-                // Si le rôle n'est pas reconnu, on redirige vers la page d'accueil
-                return redirect()->route('home')->with('error', 'Rôle non reconnu.');
+                // Si le rôle n'est pas reconnu, on déconnecte l'utilisateur et on affiche un message d'erreur
+                Auth::logout();
+                return redirect()->route('login')->with('error', 'Rôle non reconnu. Veuillez contacter l\'administrateur.');
         }
     }
     
@@ -85,11 +86,41 @@ class DashboardController extends Controller
     public function secretaire()
     {
         $user = Auth::user();
+        
+        // Statistiques principales
+        $today = Carbon::today();
+        $endOfDay = Carbon::today()->endOfDay();
+        $endOfWeek = Carbon::today()->addWeek();
+        
         $stats = [
-            'todayAppointmentsCount' => RendezVous::whereDate('date_rendez_vous', Carbon::today())->count(),
-            'newPatientsCount' => Patient::whereDate('created_at', Carbon::today())->count(),
-            'upcomingAppointments' => RendezVous::with(['patient', 'medecin'])->where('date_rendez_vous', '>', Carbon::now())->orderBy('date_rendez_vous', 'asc')->take(5)->get(),
+            // Statistiques générales
+            'total' => Patient::count(),
+            'todayAppointmentsCount' => RendezVous::whereBetween('date_rendez_vous', [$today, $endOfDay])->count(),
+            'thisWeekAppointmentsCount' => RendezVous::whereBetween('date_rendez_vous', [$today, $endOfWeek])->count(),
+            'newPatientsCount' => Patient::whereDate('created_at', $today)->count(),
+            
+            // Prochains rendez-vous (aujourd'hui et à venir)
+            'upcomingAppointments' => RendezVous::with([
+                    'patient.user', 
+                    'medecin',
+                    'consultation'
+                ])
+                ->where('date_rendez_vous', '>=', now())
+                ->orderBy('date_rendez_vous', 'asc')
+                ->take(5)
+                ->get()
+                ->filter(function($rdv) {
+                    return $rdv->patient && $rdv->patient->user && $rdv->medecin;
+                }),
+            'recentPatients' => Patient::with('user')
+                ->latest()
+                ->take(5)
+                ->get()
+                ->filter(function($patient) {
+                    return $patient->user !== null;
+                }),
         ];
+        
         return view('dashboards.secretaire', compact('stats', 'user'));
     }
 

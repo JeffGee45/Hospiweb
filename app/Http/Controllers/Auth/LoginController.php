@@ -39,15 +39,17 @@ class LoginController extends Controller
             // Redirection en fonction du rôle
             switch ($user->role) {
                 case 'Admin':
-                case 'Secretaire':
+                case 'Secrétaire':
                 case 'Infirmier':
                 case 'Pharmacien':
                 case 'Caissier':
-                    return redirect()->route('dashboard');
-                case 'Medecin':
+                case 'Médecin':
                     return redirect()->route('dashboard');
                 default:
-                    return redirect()->intended('dashboard');
+                    Auth::logout();
+                    return back()->withErrors([
+                        'email' => 'Votre compte n\'a pas de rôle valide. Veuillez contacter l\'administrateur.',
+                    ]);
             }
         }
 

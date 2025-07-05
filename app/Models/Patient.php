@@ -181,4 +181,12 @@ class Patient extends Model
     {
         return $this->hasOne(Consultation::class)->latest('date_consultation');
     }
+    
+    /**
+     * Relation avec le modèle User
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

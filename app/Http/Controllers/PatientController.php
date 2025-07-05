@@ -19,8 +19,8 @@ class PatientController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('role:Admin|Secretaire|Medecin')->only(['index', 'show']);
-        $this->middleware('role:Admin|Secretaire')->only(['create', 'store', 'edit', 'update']);
+        $this->middleware('role:Admin|Secrétaire|Médecin')->only(['index', 'show']);
+        $this->middleware('role:Admin|Secrétaire')->only(['create', 'store', 'edit', 'update']);
         $this->middleware('role:Admin')->only(['destroy']);
     }
 
@@ -30,20 +30,89 @@ class PatientController extends Controller
     public function index()
     {
         $search = request('q');
+        $status = request('status');
+        $groupeSanguin = request('groupe_sanguin');
+        $dateDebut = request('date_debut');
+        $dateFin = request('date_fin');
+        $tri = request('tri', 'recent');
         
-        $patients = Patient::when($search, function($query) use ($search) {
-            return $query->where(function($q) use ($search) {
+        // Construction de la requête
+        $query = Patient::query();
+        
+        // Filtre de recherche
+        if ($search) {
+            $query->where(function($q) use ($search) {
                 $q->where('nom', 'like', "%{$search}%")
                   ->orWhere('prenom', 'like', "%{$search}%")
-                  ->orWhere('numero_dossier', 'like', "%{$search}%");
+                  ->orWhere('numero_dossier', 'like', "%{$search}%")
+                  ->orWhere('telephone', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
             });
-        })
-        ->with('latestConsultation')
-        ->latest()
-        ->paginate($this->perPage)
-        ->appends(['q' => $search]);
-
-        return view('patients.index', compact('patients'));
+        }
+        
+        // Filtre par statut
+        if ($status) {
+            $query->where('statut', $status);
+        }
+        
+        // Filtre par groupe sanguin
+        if ($groupeSanguin) {
+            $query->where('groupe_sanguin', $groupeSanguin);
+        }
+        
+        // Filtre par date de création
+        if ($dateDebut) {
+            $query->whereDate('created_at', '>=', $dateDebut);
+        }
+        if ($dateFin) {
+            $query->whereDate('created_at', '<=', $dateFin);
+        }
+        
+        // Tri des résultats
+        switch ($tri) {
+            case 'ancien':
+                $query->oldest();
+                break;
+            case 'nom_asc':
+                $query->orderBy('nom')->orderBy('prenom');
+                break;
+            case 'nom_desc':
+                $query->orderBy('nom', 'desc')->orderBy('prenom', 'desc');
+                break;
+            case 'recent':
+            default:
+                $query->latest();
+                break;
+        }
+        
+        // Récupération des patients avec pagination
+        $patients = $query->with('latestConsultation')
+                         ->paginate($this->perPage)
+                         ->appends(request()->query());
+        
+        // Statistiques pour le tableau de bord
+        $stats = [
+            'total' => Patient::count(),
+            'actifs' => Patient::where('statut', 'actif')->count(),
+            'inactifs' => Patient::where('statut', 'inactif')->count(),
+            'decedes' => Patient::where('statut', 'décédé')->count(),
+        ];
+        
+        $groupesSanguins = [
+            'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'
+        ];
+        
+        return view('patients.index', compact(
+            'patients', 
+            'stats',
+            'groupesSanguins',
+            'search',
+            'status',
+            'groupeSanguin',
+            'dateDebut',
+            'dateFin',
+            'tri'
+        ));
     }
 
     /**

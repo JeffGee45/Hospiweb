@@ -15,7 +15,7 @@
             @endif
 
             @php
-    $updateRoute = auth()->user()->role === 'Admin' ? route('admin.patients.update', $patient->id) : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.update', $patient->id) : null);
+    $updateRoute = auth()->user()->role === 'Admin' ? route('admin.patients.update', $patient->id) : (auth()->user()->role === 'Secrétaire' ? route('secretaire.patients.update', $patient->id) : null);
 @endphp
 
 @if($updateRoute)

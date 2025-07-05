@@ -11,7 +11,7 @@
                     <p class="mt-2 text-blue-100">Consultez et gérez les dossiers des patients</p>
                 </div>
                 @php
-                    $createRoute = auth()->user()->role === 'Admin' ? route('admin.patients.create') : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.create') : null);
+                    $createRoute = auth()->user()->role === 'Admin' ? route('admin.patients.create') : (auth()->user()->role === 'Secrétaire' ? route('secretaire.patients.create') : null);
                 @endphp
                 @if($createRoute)
                 <div class="mt-4 md:mt-0">
@@ -29,15 +29,153 @@
     </div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Cartes de statistiques -->
+        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-6">
+            <!-- Total des patients -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-blue-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">
+                                    Total des patients
+                                </dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-2xl font-semibold text-gray-900">
+                                        {{ $stats['total'] }}
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-5 py-3">
+                    <div class="text-sm">
+                        <a href="{{ request()->fullUrlWithQuery(['status' => 'actif', 'page' => 1]) }}" class="font-medium text-blue-600 hover:text-blue-500">
+                            Voir tous les patients
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patients actifs -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">
+                                    Patients actifs
+                                </dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-2xl font-semibold text-gray-900">
+                                        {{ $stats['actifs'] }}
+                                    </div>
+                                    <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
+                                        <span class="sr-only">
+                                            Augmentation
+                                        </span>
+                                        {{ $stats['total'] > 0 ? round(($stats['actifs'] / $stats['total']) * 100) : 0 }}%
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-5 py-3">
+                    <div class="text-sm">
+                        <a href="{{ request()->fullUrlWithQuery(['status' => 'actif', 'page' => 1]) }}" class="font-medium text-blue-600 hover:text-blue-500">
+                            Voir les patients actifs
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patients inactifs -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">
+                                    Patients inactifs
+                                </dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-2xl font-semibold text-gray-900">
+                                        {{ $stats['inactifs'] }}
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-5 py-3">
+                    <div class="text-sm">
+                        <a href="{{ request()->fullUrlWithQuery(['status' => 'inactif', 'page' => 1]) }}" class="font-medium text-blue-600 hover:text-blue-500">
+                            Voir les patients inactifs
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Décédés -->
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="p-5">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 bg-red-500 rounded-md p-3">
+                            <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">
+                                    Décédés
+                                </dt>
+                                <dd class="flex items-baseline">
+                                    <div class="text-2xl font-semibold text-gray-900">
+                                        {{ $stats['decedes'] }}
+                                    </div>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 px-5 py-3">
+                    <div class="text-sm">
+                        <a href="{{ request()->fullUrlWithQuery(['status' => 'décédé', 'page' => 1]) }}" class="font-medium text-blue-600 hover:text-blue-500">
+                            Voir les dossiers
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Barre de recherche et filtres -->
         <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
             @php
-                $indexRoute = auth()->user()->role === 'Admin' ? route('admin.patients.index') : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.index') : null);
+                $indexRoute = auth()->user()->role === 'Admin' ? route('admin.patients.index') : (auth()->user()->role === 'Secrétaire' ? route('secretaire.patients.index') : null);
             @endphp
             @if($indexRoute)
             <form method="GET" action="{{ $indexRoute }}" class="space-y-4">
-                <div class="flex flex-col md:flex-row gap-4">
-                    <div class="flex-1 relative">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Recherche -->
+                    <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -45,37 +183,67 @@
                         </div>
                         <input type="text" 
                                name="q" 
-                               value="{{ request('q') }}" 
-                               placeholder="Rechercher par nom, prénom ou numéro de dossier"
-                               class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                               value="{{ $search }}" 
+                               placeholder="Rechercher un patient..."
+                               class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg bg-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     </div>
-                    <button type="submit" 
-                            class="px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200">
-                        Rechercher
-                    </button>
+
+                    <!-- Groupe sanguin -->
+                    <div>
+                        <select name="groupe_sanguin" onchange="this.form.submit()" 
+                                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                            <option value="">Tous les groupes sanguins</option>
+                            @foreach($groupesSanguins as $groupe)
+                                <option value="{{ $groupe }}" {{ $groupeSanguin == $groupe ? 'selected' : '' }}>{{ $groupe }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Période -->
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="date" name="date_debut" value="{{ $dateDebut }}" onchange="this.form.submit()" 
+                               class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm"
+                               placeholder="Date début">
+                        <input type="date" name="date_fin" value="{{ $dateFin }}" onchange="this.form.submit()"
+                               class="block w-full pl-3 pr-3 py-2 border border-gray-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent sm:text-sm"
+                               placeholder="Date fin">
+                    </div>
+
+                    <!-- Bouton de réinitialisation -->
+                    <div class="flex items-center">
+                        <a href="{{ $indexRoute }}" class="w-full px-4 py-2 border border-gray-300 rounded-lg text-center text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Réinitialiser
+                        </a>
+                    </div>
                 </div>
                 
-                <div class="flex flex-wrap gap-4 items-center">
-                    <div class="flex items-center">
-                        <label for="status" class="mr-2 text-sm font-medium text-gray-700">Statut :</label>
-                        <select id="status" name="status" onchange="this.form.submit()" 
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
-                            <option value="">Tous les statuts</option>
-                            <option value="actif" {{ request('status') == 'actif' ? 'selected' : '' }}>Actif</option>
-                            <option value="inactif" {{ request('status') == 'inactif' ? 'selected' : '' }}>Inactif</option>
-                            <option value="décédé" {{ request('status') == 'décédé' ? 'selected' : '' }}>Décédé</option>
-                        </select>
+                <div class="flex flex-wrap gap-4 items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center">
+                            <label for="status" class="mr-2 text-sm font-medium text-gray-700">Statut :</label>
+                            <select id="status" name="status" onchange="this.form.submit()" 
+                                    class="block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                                <option value="">Tous</option>
+                                <option value="actif" {{ $status == 'actif' ? 'selected' : '' }}>Actif</option>
+                                <option value="inactif" {{ $status == 'inactif' ? 'selected' : '' }}>Inactif</option>
+                                <option value="décédé" {{ $status == 'décédé' ? 'selected' : '' }}>Décédé</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <label for="sort" class="mr-2 text-sm font-medium text-gray-700">Trier par :</label>
+                            <select id="sort" name="tri" onchange="this.form.submit()" 
+                                    class="block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
+                                <option value="recent" {{ $tri == 'recent' ? 'selected' : '' }}>Plus récent</option>
+                                <option value="ancien" {{ $tri == 'ancien' ? 'selected' : '' }}>Plus ancien</option>
+                                <option value="nom_asc" {{ $tri == 'nom_asc' ? 'selected' : '' }}>Nom (A-Z)</option>
+                                <option value="nom_desc" {{ $tri == 'nom_desc' ? 'selected' : '' }}>Nom (Z-A)</option>
+                            </select>
+                        </div>
                     </div>
                     
-                    <div class="flex items-center">
-                        <label for="sort" class="mr-2 text-sm font-medium text-gray-700">Trier par :</label>
-                        <select id="sort" name="sort" onchange="this.form.submit()" 
-                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
-                            <option value="recent" {{ request('sort') == 'recent' ? 'selected' : '' }}>Plus récent</option>
-                            <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Plus ancien</option>
-                            <option value="name_asc" {{ request('sort') == 'name_asc' ? 'selected' : '' }}>Nom (A-Z)</option>
-                            <option value="name_desc" {{ request('sort') == 'name_desc' ? 'selected' : '' }}>Nom (Z-A)</option>
-                        </select>
+                    <div class="text-sm text-gray-500">
+                        {{ $patients->total() }} {{ Str::plural('patient', $patients->total()) }} trouvé(s)
                     </div>
                 </div>
             </form>
@@ -97,7 +265,6 @@
                 </div>
             </div>
         @endif
-        <!-- Liste des patients -->
         <div class="bg-white shadow overflow-hidden sm:rounded-lg">
             <!-- En-tête du tableau (visible sur desktop) -->
             <div class="hidden md:block">
@@ -124,43 +291,66 @@
                     <tbody class="bg-white divide-y divide-gray-200">
                         @forelse ($patients as $patient)
                         <tr class="hover:bg-gray-50">
+                            <!-- Colonne Patient -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="flex items-center">
                                     <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold">
                                         {{ strtoupper(substr($patient->prenom, 0, 1)) }}{{ strtoupper(substr($patient->nom, 0, 1)) }}
                                     </div>
                                     <div class="ml-4">
-                                        <div class="text-sm font-medium text-gray-900">{{ $patient->prenom }} {{ $patient->nom }}</div>
-                                        <div class="text-sm text-gray-500">{{ $patient->email ?? 'Aucun email' }}</div>
+                                        <div class="text-sm font-medium text-gray-900">
+                                            {{ $patient->prenom }} {{ $patient->nom }}
+                                        </div>
+                                        <div class="text-sm text-gray-500">
+                                            #{{ $patient->numero_dossier }}
+                                        </div>
                                     </div>
                                 </div>
                             </td>
+                            
+                            <!-- Colonne Informations -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm text-gray-900">
                                     <div class="flex items-center">
                                         <svg class="h-4 w-4 text-gray-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                         </svg>
-                                        {{ $patient->date_naissance ? \Carbon\Carbon::parse($patient->date_naissance)->format('d/m/Y') : 'N/D' }}
+                                        {{ $patient->email ?? 'Non renseigné' }}
                                     </div>
                                     <div class="flex items-center mt-1">
                                         <svg class="h-4 w-4 text-gray-400 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                         </svg>
-                                        {{ $patient->telephone ?? 'N/D' }}
+                                        {{ $patient->telephone ?? 'Non renseigné' }}
+                                    </div>
+                                    <div class="mt-1">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                                            {{ $patient->groupe_sanguin ?? 'GS non renseigné' }}
+                                        </span>
                                     </div>
                                 </div>
                             </td>
+                            <!-- Dernière consultation -->
                             <td class="px-6 py-4 whitespace-nowrap">
-                                @if ($patient->latestConsultation)
-                                    <div class="text-sm text-gray-900">{{ \Carbon\Carbon::parse($patient->latestConsultation->date_consultation)->format('d/m/Y') }}</div>
-                                    <div class="text-sm text-gray-500">{{ $patient->latestConsultation->type_consultation ?? 'Consultation' }}</div>
+                                @if($patient->latestConsultation)
+                                    <div class="text-sm text-gray-900">
+                                        {{ $patient->latestConsultation->date_consultation->format('d/m/Y') }}
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        {{ $patient->latestConsultation->motif ?? 'Sans motif' }}
+                                    </div>
+                                    @if($patient->latestConsultation->medecin)
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        Dr. {{ $patient->latestConsultation->medecin->prenom }} {{ $patient->latestConsultation->medecin->nom }}
+                                    </div>
+                                    @endif
                                 @else
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                                         Aucune consultation
                                     </span>
                                 @endif
                             </td>
+                            <!-- Statut -->
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $statusColors = [
@@ -175,11 +365,19 @@
                                 <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white {{ $color }}">
                                     {{ ucfirst($patient->statut) }}
                                 </span>
+                                <div class="text-xs text-gray-500 mt-1">
+                                    Inscrit le {{ $patient->created_at->format('d/m/Y') }}
+                                </div>
+                                @if($patient->date_naissance)
+                                <div class="text-xs text-gray-500">
+                                    {{ \Carbon\Carbon::parse($patient->date_naissance)->age }} ans
+                                </div>
+                                @endif
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                 <div class="flex justify-end space-x-2">
                                     @php
-                                        $showRoute = auth()->user()->role === 'Admin' ? route('admin.patients.show', $patient->id) : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.show', $patient->id) : null);
+                                        $showRoute = auth()->user()->role === 'Admin' ? route('admin.patients.show', $patient->id) : (auth()->user()->role === 'Secrétaire' ? route('secretaire.patients.show', $patient->id) : null);
                                     @endphp
                                     @if($showRoute)
                                     <a href="{{ $showRoute }}" 
@@ -193,7 +391,7 @@
                                     @endif
 
                                     @php
-                                        $editRoute = auth()->user()->role === 'Admin' ? route('admin.patients.edit', $patient->id) : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.edit', $patient->id) : null);
+                                        $editRoute = auth()->user()->role === 'Admin' ? route('admin.patients.edit', $patient->id) : (auth()->user()->role === 'Secrétaire' ? route('secretaire.patients.edit', $patient->id) : null);
                                     @endphp
                                     @if($editRoute)
                                     <a href="{{ $editRoute }}" 
@@ -295,7 +493,7 @@
                 <div class="px-4 py-3 bg-gray-50 border-t border-gray-200">
                     <div class="flex justify-end space-x-2">
                         @php
-                            $showRoute = auth()->user()->role === 'Admin' ? route('admin.patients.show', $patient->id) : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.show', $patient->id) : null);
+                            $showRoute = auth()->user()->role === 'Admin' ? route('admin.patients.show', $patient->id) : (auth()->user()->role === 'Secrétaire' ? route('secretaire.patients.show', $patient->id) : null);
                         @endphp
                         @if($showRoute)
                         <a href="{{ $showRoute }}" class="text-blue-600 hover:text-blue-900 p-1 rounded-full hover:bg-blue-50" title="Voir">
@@ -304,7 +502,7 @@
                         @endif
 
                         @php
-                            $editRoute = auth()->user()->role === 'Admin' ? route('admin.patients.edit', $patient->id) : (auth()->user()->role === 'Secretaire' ? route('secretary.patients.edit', $patient->id) : null);
+                            $editRoute = auth()->user()->role === 'Admin' ? route('admin.patients.edit', $patient->id) : (auth()->user()->role === 'Secrétaire' ? route('secretaire.patients.edit', $patient->id) : null);
                         @endphp
                         @if($editRoute)
                         <a href="{{ $editRoute }}" class="text-green-600 hover:text-green-900 p-1 rounded-full hover:bg-green-50" title="Modifier">
