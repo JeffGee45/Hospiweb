@@ -103,7 +103,7 @@ class PatientSeeder extends Seeder
                 'telephone_contact_urgence' => '0' . $faker->numberBetween(600000000, 799999999),
                 'lien_contact_urgence' => $faker->randomElement(['Conjoint(e)', 'Parent', 'Ami(e)']),
                 'notes' => $faker->optional(0.3)->sentence,
-                'statut' => $faker->randomElement(['actif', 'inactif']),
+                'statut' => $faker->randomElement(['guéri', 'malade']),
                 'created_at' => now()->subDays(rand(1, 365)),
                 'updated_at' => now()->subDays(rand(1, 365)),
             ]);

@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <!-- Patients actifs -->
+            <!-- Patients guéris -->
             <div class="bg-white overflow-hidden shadow rounded-lg">
                 <div class="p-5">
                     <div class="flex items-center">
@@ -75,17 +75,17 @@
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Patients actifs
+                                    Patients guéris
                                 </dt>
                                 <dd class="flex items-baseline">
                                     <div class="text-2xl font-semibold text-gray-900">
-                                        {{ $stats['actifs'] }}
+                                        {{ $stats['gueris'] }}
                                     </div>
                                     <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                                         <span class="sr-only">
-                                            Augmentation
+                                            Pourcentage
                                         </span>
-                                        {{ $stats['total'] > 0 ? round(($stats['actifs'] / $stats['total']) * 100) : 0 }}%
+                                        {{ $stats['total'] > 0 ? round(($stats['gueris'] / $stats['total']) * 100) : 0 }}%
                                     </div>
                                 </dd>
                             </dl>
@@ -94,30 +94,36 @@
                 </div>
                 <div class="bg-gray-50 px-5 py-3">
                     <div class="text-sm">
-                        <a href="{{ request()->fullUrlWithQuery(['status' => 'actif', 'page' => 1]) }}" class="font-medium text-blue-600 hover:text-blue-500">
-                            Voir les patients actifs
+                        <a href="{{ request()->fullUrlWithQuery(['status' => 'guéri', 'page' => 1]) }}" class="font-medium text-blue-600 hover:text-blue-500">
+                            Voir les patients guéris
                         </a>
                     </div>
                 </div>
             </div>
 
-            <!-- Patients inactifs -->
+            <!-- Patients malades -->
             <div class="bg-white overflow-hidden shadow rounded-lg">
                 <div class="p-5">
                     <div class="flex items-center">
                         <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
                             <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                             </svg>
                         </div>
                         <div class="ml-5 w-0 flex-1">
                             <dl>
                                 <dt class="text-sm font-medium text-gray-500 truncate">
-                                    Patients inactifs
+                                    Patients malades
                                 </dt>
                                 <dd class="flex items-baseline">
                                     <div class="text-2xl font-semibold text-gray-900">
-                                        {{ $stats['inactifs'] }}
+                                        {{ $stats['malades'] }}
+                                    </div>
+                                    <div class="ml-2 flex items-baseline text-sm font-semibold text-yellow-600">
+                                        <span class="sr-only">
+                                            Pourcentage
+                                        </span>
+                                        {{ $stats['total'] > 0 ? round(($stats['malades'] / $stats['total']) * 100) : 0 }}%
                                     </div>
                                 </dd>
                             </dl>
@@ -126,8 +132,8 @@
                 </div>
                 <div class="bg-gray-50 px-5 py-3">
                     <div class="text-sm">
-                        <a href="{{ request()->fullUrlWithQuery(['status' => 'inactif', 'page' => 1]) }}" class="font-medium text-blue-600 hover:text-blue-500">
-                            Voir les patients inactifs
+                        <a href="{{ request()->fullUrlWithQuery(['status' => 'malade', 'page' => 1]) }}" class="font-medium text-blue-600 hover:text-blue-500">
+                            Voir les patients malades
                         </a>
                     </div>
                 </div>
@@ -224,8 +230,8 @@
                             <select id="status" name="status" onchange="this.form.submit()" 
                                     class="block pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg">
                                 <option value="">Tous</option>
-                                <option value="actif" {{ $status == 'actif' ? 'selected' : '' }}>Actif</option>
-                                <option value="inactif" {{ $status == 'inactif' ? 'selected' : '' }}>Inactif</option>
+                                <option value="guéri" {{ $status == 'guéri' ? 'selected' : '' }}>Guéri</option>
+                                <option value="malade" {{ $status == 'malade' ? 'selected' : '' }}>Malade</option>
                                 <option value="décédé" {{ $status == 'décédé' ? 'selected' : '' }}>Décédé</option>
                             </select>
                         </div>
@@ -354,8 +360,8 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
                                     $statusColors = [
-                                        'actif' => 'bg-gradient-to-r from-green-500 to-emerald-500',
-                                        'inactif' => 'bg-gradient-to-r from-amber-500 to-orange-500',
+                                        'guéri' => 'bg-gradient-to-r from-green-500 to-emerald-500',
+                                        'malade' => 'bg-gradient-to-r from-amber-500 to-orange-500',
                                         'décédé' => 'bg-gradient-to-r from-red-500 to-rose-500',
                                         'default' => 'bg-gray-200 text-gray-800'
                                     ];
@@ -452,8 +458,8 @@
                         <div class="ml-2 flex-shrink-0">
                             @php
                                 $statusColors = [
-                                    'actif' => 'bg-gradient-to-r from-green-500 to-emerald-500',
-                                    'inactif' => 'bg-gradient-to-r from-amber-500 to-orange-500',
+                                    'guéri' => 'bg-gradient-to-r from-green-500 to-emerald-500',
+                                    'malade' => 'bg-gradient-to-r from-amber-500 to-orange-500',
                                     'décédé' => 'bg-gradient-to-r from-red-500 to-rose-500',
                                     'default' => 'bg-gray-200 text-gray-800'
                                 ];

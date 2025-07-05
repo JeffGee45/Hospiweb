@@ -49,8 +49,8 @@
                     
                     @php
                         $statutClasses = [
-                            'actif' => 'bg-gradient-to-r from-green-500 to-emerald-500',
-                            'inactif' => 'bg-gradient-to-r from-amber-500 to-orange-500',
+                            'guéri' => 'bg-gradient-to-r from-green-500 to-emerald-500',
+                            'malade' => 'bg-gradient-to-r from-amber-500 to-orange-500',
                             'décédé' => 'bg-gradient-to-r from-red-500 to-rose-500',
                         ][strtolower($patient->statut)] ?? 'bg-gray-500';
                     @endphp

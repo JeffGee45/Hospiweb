@@ -95,9 +95,9 @@
                     <label for="statut" class="block font-semibold text-gray-700 mb-1">Statut</label>
                     <select name="statut" id="statut" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition" required>
                         <option value="" disabled>Sélectionner un statut</option>
-                        <option value="Actif" {{ old('statut', $patient->statut) == 'Actif' ? 'selected' : '' }}>Actif</option>
-                        <option value="Inactif" {{ old('statut', $patient->statut) == 'Inactif' ? 'selected' : '' }}>Inactif</option>
-                        <option value="Décédé" {{ old('statut', $patient->statut) == 'Décédé' ? 'selected' : '' }}>Décédé</option>
+                        <option value="guéri" {{ old('statut', $patient->statut) == 'guéri' ? 'selected' : '' }}>Guéri</option>
+                        <option value="malade" {{ old('statut', $patient->statut) == 'malade' ? 'selected' : '' }}>Malade</option>
+                        <option value="décédé" {{ old('statut', $patient->statut) == 'décédé' ? 'selected' : '' }}>Décédé</option>
                     </select>
                 </div>
 

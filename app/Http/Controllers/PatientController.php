@@ -93,8 +93,8 @@ class PatientController extends Controller
         // Statistiques pour le tableau de bord
         $stats = [
             'total' => Patient::count(),
-            'actifs' => Patient::where('statut', 'actif')->count(),
-            'inactifs' => Patient::where('statut', 'inactif')->count(),
+            'gueris' => Patient::where('statut', 'guéri')->count(),
+            'malades' => Patient::where('statut', 'malade')->count(),
             'decedes' => Patient::where('statut', 'décédé')->count(),
         ];
         
@@ -194,7 +194,7 @@ class PatientController extends Controller
             'telephone_contact_urgence' => 'nullable|string|max:20',
             'lien_contact_urgence' => 'nullable|string|max:255',
             'notes' => 'nullable|string',
-            'statut' => 'sometimes|in:Actif,Inactif,Décédé',
+            'statut' => 'sometimes|in:guéri,malade,décédé',
         ];
 
         if ($patientId) {
@@ -205,7 +205,7 @@ class PatientController extends Controller
         
         // Valeurs par défaut
         if (!isset($validatedData['statut'])) {
-            $validatedData['statut'] = 'Actif';
+            $validatedData['statut'] = 'malade';
         }
         
         // Nettoyage des données
@@ -382,12 +382,12 @@ class PatientController extends Controller
     }
 
     /**
-     * Change le statut du patient (Actif, Inactif, Décédé).
+     * Change le statut du patient (guéri, malade, décédé).
      */
     public function changeStatus(Request $request, Patient $patient)
     {
         $request->validate([
-            'statut' => 'required|string|in:Actif,Inactif,Décédé',
+            'statut' => 'required|string|in:guéri,malade,décédé',
         ]);
 
         $patient->update(['statut' => $request->statut]);

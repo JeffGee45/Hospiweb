@@ -128,6 +128,25 @@ Route::middleware(['auth', \App\Http\Middleware\CheckGetStarted::class])->group(
             // Génération PDF
             Route::get('/{ordonnance}/pdf', [App\Http\Controllers\Medecin\OrdonnanceController::class, 'generatePdf'])->name('pdf');
         });
+        
+        // Gestion des prescriptions
+        Route::prefix('consultations/{consultation}')->name('consultations.')->group(function () {
+            // Création d'une nouvelle prescription pour une consultation
+            Route::get('/prescriptions/create', [PrescriptionController::class, 'create'])
+                ->name('prescriptions.create');
+                
+            // Enregistrement d'une nouvelle prescription
+            Route::post('/prescriptions', [PrescriptionController::class, 'store'])
+                ->name('prescriptions.store');
+                
+            // Affichage d'une prescription
+            Route::get('/prescriptions/{prescription}', [PrescriptionController::class, 'show'])
+                ->name('prescriptions.show');
+                
+            // Génération PDF d'une prescription
+            Route::get('/prescriptions/{prescription}/print', [PrescriptionController::class, 'print'])
+                ->name('prescriptions.print');
+        });
     });
 
     Route::prefix('patient')->middleware('role:Patient')->name('patient.')->group(function () {

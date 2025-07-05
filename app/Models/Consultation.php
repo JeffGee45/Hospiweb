@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Prescription;
 
 class Consultation extends Model
 {
@@ -69,6 +70,11 @@ class Consultation extends Model
     public function ordonnance()
     {
         return $this->hasOne(Ordonnance::class);
+    }
+
+    public function prescription()
+    {
+        return $this->hasOne(Prescription::class);
     }
 
     public function examens()

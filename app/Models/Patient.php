@@ -135,8 +135,8 @@ class Patient extends Model
     public function getStatusClassesAttribute()
     {
         return [
-            'actif' => 'bg-green-100 text-green-800',
-            'inactif' => 'bg-yellow-100 text-yellow-800',
+            'guéri' => 'bg-green-100 text-green-800',
+            'malade' => 'bg-yellow-100 text-yellow-800',
             'décédé' => 'bg-red-100 text-red-800',
         ][$this->statut] ?? 'bg-gray-100 text-gray-800';
     }
@@ -144,9 +144,20 @@ class Patient extends Model
     /**
      * Scope pour les patients actifs
      */
-    public function scopeActif($query)
+    /**
+     * Scope pour les patients guéris
+     */
+    public function scopeGuéri($query)
     {
-        return $query->where('statut', 'Actif');
+        return $query->where('statut', 'guéri');
+    }
+    
+    /**
+     * Scope pour les patients malades
+     */
+    public function scopeMalade($query)
+    {
+        return $query->where('statut', 'malade');
     }
 
     /**
